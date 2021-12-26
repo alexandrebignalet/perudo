@@ -29,3 +29,13 @@ jobs:
 
       - name: Run tests
         run: php ./vendor/bin/phpunit
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Heroku deploy
+        run: git push heroku main
+
+    
