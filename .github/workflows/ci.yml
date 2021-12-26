@@ -28,14 +28,17 @@ jobs:
         run: composer install --prefer-dist
 
       - name: Run tests
-        run: php ./vendor/bin/phpunit
+        run: SYMFONY_DEPRECATIONS_HELPER='max[total]=5&max[self]=0&max[direct]=0&max[indirect]=5' php ./vendor/bin/phpunit
   deploy:
     needs: build
     name: Deploy
     runs-on: ubuntu-latest
+
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Heroku deploy
-        run: git push heroku main
-
-    
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "hidden-ravine-52418"
+          heroku_email: "alexandre.bignalet@gmail.com"
