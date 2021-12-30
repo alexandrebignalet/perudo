@@ -14,7 +14,7 @@ class PerudoController
     public function index(): Response
     {
         return new Response(
-            '<html><body><h1>Perudo</h1></body></html>'
+            '<html><body><h1>Perudo mon bon yoan</h1></body></html>'
         );
     }
 }
