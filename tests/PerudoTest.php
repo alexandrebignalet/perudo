@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Entity\Perudo;
 use App\Entity\Player;
+use App\Service\DiceLauncherImpl;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +21,7 @@ class PerudoTest extends TestCase
 
         // THEN
         $this->assertEquals(1, $game->playersCount());
-        $expected = new Player("francis");
+        $expected = new Player("francis", Player::$START_DICES_COUNT, false, new DiceLauncherImpl());
         $this->assertEquals($expected->name(), $game->players()[0]->name());
     }
 
@@ -93,7 +94,9 @@ class PerudoTest extends TestCase
         $game->start();
 
         // THEN
-        $playersNames = array_map(function(Player $player): string { return $player->name(); }, $game->players());
+        $playersNames = array_map(function (Player $player): string {
+            return $player->name();
+        }, $game->players());
         $this->assertTrue(in_array($game->currentPlayerName(), $playersNames));
     }
 
