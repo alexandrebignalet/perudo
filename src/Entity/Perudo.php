@@ -2,48 +2,44 @@
 
 namespace App\Entity;
 
+use App\Service\DiceLauncher;
+use App\Service\DiceLauncherImpl;
 use InvalidArgumentException;
 
 class Perudo
 {
-    private array $players;
-    private string $currentPlayerName;
-    private Bet $lastBet;
+    private array $playersNames;
+    private PlayerTurn $turn;
+    private ?Bet $lastBet;
+    private DiceLauncher $diceLauncher;
 
-    public function __construct()
+    public function __construct(DiceLauncher $diceLauncher = new DiceLauncherImpl())
     {
-        $this->players = array();
-
-
+        $this->playersNames = array();
+        $this->lastBet = null;
+        $this->diceLauncher = $diceLauncher;
     }
 
     public function join(string $name)
     {
-        if($this->isAlreadyPlayerNamed($name))
-        {
+        if ($this->hasAlreadyPlayerNamed($name)) {
             throw new InvalidArgumentException("Tu ne peux pas avoir le même prénom que ton copain!");
-        }
-        else if ($this->playersCount() == 6)  {
+        } else if ($this->playersCount() == 6) {
             throw new InvalidArgumentException("Le nombre de joueurs maximum est atteint!");
         } else {
-            $this->players[] = new Player($name);
+            $this->playersNames[] = $name;
         }
 
     }
 
-    public function start()
+    public function start(): void
     {
-          if($this->playersCount() < 2)
-          {
-              throw new InvalidArgumentException ("Tu ne peux pas jouer à moins de deux joueurs!");
-          }
+        if ($this->playersCount() < 2) {
+            throw new InvalidArgumentException ("Tu ne peux pas jouer à moins de deux joueurs!");
+        }
 
-         $this->currentPlayerName = $this->players[rand(0, $this->playersCount() -1)]->name();
-    }
-
-    public function currentPlayerName(): string
-    {
-        return $this->currentPlayerName;
+        shuffle($this->playersNames);
+        $this->turn = new PlayerTurn($this->playersNames, $this->diceLauncher);
     }
 
     public function bet(string $playerName, int $diceNumber, int $diceValue)
@@ -52,41 +48,56 @@ class Perudo
             throw new InvalidArgumentException("Tu essaies de tricher ce n'est pas à toi de jouer!");
         }
 
-        if ($diceNumber <= 0) {
-            throw new InvalidArgumentException("Tu dois miser un nombre minimum de 1 dé!");
-        }
-
-        if ($diceValue < 2 || $diceValue > 6) {
-            throw new InvalidArgumentException("Tu dois annoncer une valeur minimum de 2 et maximum de 6!");
-        }
-        $this->lastBet = new Bet($playerName, $diceNumber, $diceValue);
-       // $this->currentPlayerName = $this->nextPlayer();
+        $this->lastBet = new Bet($playerName, $diceNumber, DiceValue::of($diceValue), $this->lastBet, $this->turn->isPalefico());
+        $this->turn->goNext();
     }
 
-    public function lastBet(): Bet
+    public function contestLastBet(string $playerName)
+    {
+        if ($playerName != $this->currentPlayerName()) {
+            throw new InvalidArgumentException("Tu essaies de tricher ce n'est pas à toi de jouer!");
+        }
+
+        if (is_null($this->lastBet)) {
+            throw new InvalidArgumentException("Personne n'a joué avant toi");
+        }
+
+        $this->turn->resolveContest($this->lastBet);
+        $this->lastBet = null;
+    }
+
+    public function lastBet(): ?Bet
     {
         return $this->lastBet;
     }
 
+    public function hasAlreadyPlayerNamed(string $name): bool
+    {
+        return array_search($name, $this->playersNames) !== false;
+    }
+
+    public function currentPlayerName(): string
+    {
+        return $this->turn->current()->name();
+    }
+
     public function playersCount(): int
     {
-        return count($this->players);
+        return count($this->playersNames);
     }
 
-    public function players(): array {
-        return $this->players;
-    }
-
-    public function isAlreadyPlayerNamed(string $name): bool
+    public function turn(): PlayerTurn
     {
-        for ($i = 0; $i < $this->playersCount(); $i++)
-        {
-          if ($this->players[$i]->name()==$name )
-          {
-              return true;
-          }
-        }
-        return false;
+        return $this->turn;
     }
 
+    public function playersNames(): array
+    {
+        return $this->playersNames;
+    }
+
+    public function winner(): ?string
+    {
+        return $this->turn->winner();
+    }
 }
