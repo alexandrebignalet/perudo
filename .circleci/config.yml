@@ -35,7 +35,7 @@ jobs:
         steps:
             -   run:
                     name: Merge master on heroku
-                    command: git checkout heroku && git merge master && git push origin heroku
+                    command: git checkout heroku && git merge main && git push origin heroku
 
 workflows:
     version: 2
@@ -47,4 +47,4 @@ workflows:
                         - build
                     filters:
                         branches:
-                            only: master
+                            only: main
