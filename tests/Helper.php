@@ -2,8 +2,8 @@
 
 namespace App\Tests;
 
-use App\Entity\Perudo;
-use App\Entity\Player;
+use App\Entity\Perudo\Perudo;
+use App\Entity\Perudo\Player;
 
 class Helper
 {

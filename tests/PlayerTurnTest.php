@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\PlayerTurn;
+use App\Entity\Perudo\PlayerTurn;
 use App\Service\DiceLauncherImpl;
 use PHPUnit\Framework\TestCase;
 

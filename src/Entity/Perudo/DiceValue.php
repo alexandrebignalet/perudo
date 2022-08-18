@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Perudo;
 
 use InvalidArgumentException;
 
@@ -48,7 +48,7 @@ class DiceValue
         if ($withPaco) {
             return $value == Paco::$VALUE || $value == $this->value;
         }
-        
+
         return $value == $this->value;
     }
 }

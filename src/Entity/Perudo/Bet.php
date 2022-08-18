@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Perudo;
 
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Pure;

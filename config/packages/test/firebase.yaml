@@ -1,0 +1,32 @@
+kreait_firebase:
+    projects:
+        my_project:
+            # Optional: Path to the project's Service Account credentials file
+            # If omitted, the credentials will be auto-discovered as described
+            # in https://firebase-php.readthedocs.io/en/stable/setup.html#with-autodiscovery
+            credentials: '%kernel.project_dir%/config/my_project_credentials.json'
+            # Optional: If set to true, this project will be used when 
+            # type hinting the component classes of the Firebase SDK,
+            # e.g. Kreait\Firebase\Auth, Kreait\Firebase\Database,
+            # Kreait\Firebase\Messaging, etc.
+            default: false
+            # Optional: If set to false, the service and its alias can only be
+            # used via dependency injection, and not be retrieved from the
+            # container directly.
+            public: true
+            # Optional: Should only be used if the URL of your Realtime
+            # Database can not be generated with the project id of the 
+            # given Service Account
+            database_uri: 'https://my_project.firebaseio.com'
+            # Optional: Make the client tenant aware
+            tenant_id: 'tenant-id'
+            # Optional: Default domain for Dynamic Links
+            default_dynamic_links_domain: 'https://my_project.page.link'
+            # Optional: Used to cache Google's public keys.
+            verifier_cache: null # Example: cache.app
+            # Optional: Used to cache the authentication tokens for connecting to the Firebase servers.
+            auth_token_cache: null # Example: cache.app
+            # If set, logs simple HTTP request and response statuses
+            http_request_logger: null # Example: monolog.logger.firebase
+            # If set, logs detailed HTTP request and response statuses
+            http_request_debug_logger: null # Example: monolog.logger.firebase_debug

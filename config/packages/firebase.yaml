@@ -1,0 +1,4 @@
+kreait_firebase:
+    projects:
+        ab-perudo-game:
+            database_uri: 'https://ab-perudo-game-default-rtdb.europe-west1.firebasedatabase.app'

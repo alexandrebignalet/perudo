@@ -2,9 +2,9 @@
 
 namespace App\Tests;
 
-use App\Entity\Bet;
-use App\Entity\Perudo;
-use App\Entity\Player;
+use App\Entity\Perudo\Bet;
+use App\Entity\Perudo\Perudo;
+use App\Entity\Perudo\Player;
 use App\Service\DiceLauncher;
 use App\Service\DiceLauncherImpl;
 use InvalidArgumentException;

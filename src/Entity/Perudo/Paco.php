@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Perudo;
 
 class Paco extends DiceValue
 {

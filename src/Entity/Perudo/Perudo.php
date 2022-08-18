@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Perudo;
 
 use App\Service\DiceLauncher;
 use App\Service\DiceLauncherImpl;
@@ -9,15 +9,19 @@ use InvalidArgumentException;
 class Perudo
 {
     private array $playersNames;
-    private PlayerTurn $turn;
+    private ?PlayerTurn $turn = null;
     private ?Bet $lastBet;
     private DiceLauncher $diceLauncher;
 
-    public function __construct(DiceLauncher $diceLauncher = new DiceLauncherImpl())
+    public function __construct(DiceLauncher $diceLauncher = new DiceLauncherImpl(),
+                                array        $playersNames = [],
+                                ?PlayerTurn  $turn = null,
+                                ?Bet         $lastBet = null)
     {
-        $this->playersNames = array();
-        $this->lastBet = null;
+        $this->playersNames = $playersNames;
+        $this->lastBet = $lastBet;
         $this->diceLauncher = $diceLauncher;
+        $this->turn = $turn;
     }
 
     public function join(string $name)
@@ -78,7 +82,7 @@ class Perudo
 
     public function currentPlayerName(): string
     {
-        return $this->turn->current()->name();
+        return $this->turn?->current()->name();
     }
 
     public function playersCount(): int
@@ -86,7 +90,7 @@ class Perudo
         return count($this->playersNames);
     }
 
-    public function turn(): PlayerTurn
+    public function turn(): ?PlayerTurn
     {
         return $this->turn;
     }
@@ -98,6 +102,6 @@ class Perudo
 
     public function winner(): ?string
     {
-        return $this->turn->winner();
+        return $this->turn?->winner();
     }
 }

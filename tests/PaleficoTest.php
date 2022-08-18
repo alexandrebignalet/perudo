@@ -2,9 +2,9 @@
 
 namespace App\Tests;
 
-use App\Entity\Paco;
-use App\Entity\Perudo;
-use App\Entity\Player;
+use App\Entity\Perudo\Paco;
+use App\Entity\Perudo\Perudo;
+use App\Entity\Perudo\Player;
 use App\Service\DiceLauncher;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

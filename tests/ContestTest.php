@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Perudo;
+use App\Entity\Perudo\Perudo;
 use App\Service\DiceLauncher;
 use App\Service\DiceLauncherImpl;
 use InvalidArgumentException;

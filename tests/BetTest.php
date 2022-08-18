@@ -2,10 +2,10 @@
 
 namespace App\Tests;
 
-use App\Entity\Bet;
-use App\Entity\DiceValue;
-use App\Entity\Paco;
-use App\Entity\Perudo;
+use App\Entity\Perudo\Bet;
+use App\Entity\Perudo\DiceValue;
+use App\Entity\Perudo\Paco;
+use App\Entity\Perudo\Perudo;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
