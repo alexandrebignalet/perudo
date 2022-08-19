@@ -12,18 +12,21 @@ class Bet
     private string $playerName;
     private int $diceNumber;
     private DiceValue $diceValue;
-    private bool $palefico;
 
-    public function __construct(string $playerName, int $diceNumber, DiceValue $diceValue, ?Bet $previousBet = null, bool $palefico = false)
+    public static function of(string $playerName, int $diceNumber, DiceValue $diceValue, ?Bet $previousBet = null, bool $palefico = false)
     {
         $palefico
-            ? $this->validatePalefico($diceNumber, $diceValue, $previousBet)
-            : $this->validate($diceNumber, $diceValue, $previousBet);
+            ? Bet::validatePalefico($diceValue, $previousBet)
+            : Bet::validate($diceNumber, $diceValue, $previousBet);
 
+        return new Bet($playerName, $diceNumber, $diceValue);
+    }
+
+    public function __construct(string $playerName, int $diceNumber, DiceValue $diceValue)
+    {
         $this->playerName = $playerName;
         $this->diceNumber = $diceNumber;
         $this->diceValue = $diceValue;
-        $this->palefico = $palefico;
     }
 
     /**
@@ -50,10 +53,10 @@ class Bet
         return $this->diceValue;
     }
 
-    private function validate(int $currentDiceNumber, DiceValue $currentDiceValue, ?Bet $previousBet): void
+    private static function validate(int $currentDiceNumber, DiceValue $currentDiceValue, ?Bet $previousBet): void
     {
-        $minimumDiceNumber = $this->minimumDiceNumber($previousBet, $currentDiceValue instanceof Paco);
-        $allowedDiceValueRange = $this->allowedDiceValueRange($previousBet);
+        $minimumDiceNumber = Bet::minimumDiceNumber($previousBet, $currentDiceValue instanceof Paco);
+        $allowedDiceValueRange = Bet::allowedDiceValueRange($previousBet);
 
         if ($currentDiceNumber < $minimumDiceNumber) {
             throw new InvalidArgumentException("Tu dois miser un nombre minimum de $minimumDiceNumber dé!");
@@ -69,7 +72,7 @@ class Bet
         }
     }
 
-    #[Pure] private function allowedDiceValueRange(?Bet $previousBet): array
+    #[Pure] private static function allowedDiceValueRange(?Bet $previousBet): array
     {
         if (is_null($previousBet)) {
             return range(2, 6);
@@ -80,7 +83,7 @@ class Bet
         return $range;
     }
 
-    #[Pure] private function minimumDiceNumber(?Bet $previousBet, bool $isPacoBet): int
+    #[Pure] private static function minimumDiceNumber(?Bet $previousBet, bool $isPacoBet): int
     {
         if (is_null($previousBet)) {
             return 1;
@@ -100,7 +103,7 @@ class Bet
         return round($this->diceNumber / 2);
     }
 
-    private function validatePalefico(int $diceNumber, DiceValue $diceValue, ?Bet $previousBet)
+    private static function validatePalefico(DiceValue $diceValue, ?Bet $previousBet)
     {
         if (is_null($previousBet)) {
             return;

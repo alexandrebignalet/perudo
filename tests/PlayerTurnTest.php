@@ -13,7 +13,7 @@ class PlayerTurnTest extends TestCase
 
     public function setUp(): void
     {
-        $this->turn = new PlayerTurn($this->players, new DiceLauncherImpl());
+        $this->turn = PlayerTurn::init($this->players, new DiceLauncherImpl());
     }
 
 

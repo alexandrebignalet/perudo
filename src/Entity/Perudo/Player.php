@@ -12,21 +12,30 @@ class Player
     private array $dices;
     private bool $isPalefico;
 
-    public function __construct(string $name, int $dicesCount, bool $isPalefico, DiceLauncher $diceLauncher)
+    public static function init(string $name, int $dicesCount, bool $isPalefico, DiceLauncher $diceLauncher)
+    {
+        return new Player(
+            $name,
+            $diceLauncher->launch($dicesCount),
+            $isPalefico
+        );
+    }
+
+    public function __construct(string $name, array $dices, bool $isPalefico)
     {
         $this->name = $name;
-        $this->dices = $diceLauncher->launch($dicesCount);
+        $this->dices = $dices;
         $this->isPalefico = $isPalefico;
     }
 
     public function rerollDices(DiceLauncher $diceLauncher): Player
     {
-        return new Player($this->name, $this->diceCount(), false, $diceLauncher);
+        return Player::init($this->name, $this->diceCount(), false, $diceLauncher);
     }
 
     public function looseDice(DiceLauncher $diceLauncher): Player
     {
-        return new Player($this->name, $this->diceCount() - 1, $this->diceCount() == 2, $diceLauncher);
+        return Player::init($this->name, $this->diceCount() - 1, $this->diceCount() == 2, $diceLauncher);
     }
 
     #[Pure] public function active(): bool

@@ -11,12 +11,18 @@ class PlayerTurn
     private array $activePlayers;
     private DiceLauncher $diceLauncher;
 
-    public function __construct(array $playersNames, DiceLauncher $diceLauncher)
+    public static function init(array $playersNames, DiceLauncher $launcher): PlayerTurn
     {
+        $players = array_map(fn(string $name) => Player::init($name, Player::$START_DICES_COUNT, false, $launcher), $playersNames);
+        return new PlayerTurn(count($players), 0, $players, $launcher);
+    }
+
+    public function __construct(int $count, int $current, array $activePlayers, DiceLauncher $diceLauncher)
+    {
+        $this->count = $count;
+        $this->current = $current;
+        $this->activePlayers = $activePlayers;
         $this->diceLauncher = $diceLauncher;
-        $this->activePlayers = array_map(fn(string $name) => new Player($name, Player::$START_DICES_COUNT, false, $diceLauncher), $playersNames);
-        $this->count = count($this->activePlayers);
-        $this->current = 0;
     }
 
     public function current(): Player

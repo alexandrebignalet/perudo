@@ -23,7 +23,7 @@ class PerudoTest extends TestCase
 
         // THEN
         $this->assertEquals(1, $game->playersCount());
-        $expected = new Player("francis", Player::$START_DICES_COUNT, false, new DiceLauncherImpl());
+        $expected = Player::init("francis", Player::$START_DICES_COUNT, false, new DiceLauncherImpl());
         $this->assertEquals($expected->name(), $game->playersNames()[0]);
     }
 

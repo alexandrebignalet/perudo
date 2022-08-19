@@ -9,7 +9,7 @@ use InvalidArgumentException;
 class Perudo
 {
     private array $playersNames;
-    private ?PlayerTurn $turn = null;
+    private ?PlayerTurn $turn;
     private ?Bet $lastBet;
     private DiceLauncher $diceLauncher;
 
@@ -43,7 +43,7 @@ class Perudo
         }
 
         shuffle($this->playersNames);
-        $this->turn = new PlayerTurn($this->playersNames, $this->diceLauncher);
+        $this->turn = PlayerTurn::init($this->playersNames, $this->diceLauncher);
     }
 
     public function bet(string $playerName, int $diceNumber, int $diceValue)
@@ -52,7 +52,7 @@ class Perudo
             throw new InvalidArgumentException("Tu essaies de tricher ce n'est pas à toi de jouer!");
         }
 
-        $this->lastBet = new Bet($playerName, $diceNumber, DiceValue::of($diceValue), $this->lastBet, $this->turn->isPalefico());
+        $this->lastBet = Bet::of($playerName, $diceNumber, DiceValue::of($diceValue), $this->lastBet, $this->turn->isPalefico());
         $this->turn->goNext();
     }
 

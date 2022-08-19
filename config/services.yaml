@@ -22,6 +22,17 @@ services:
             - '../src/Tests/'
     App\Controller\PerudoController:
         public: true
+    App\Controller\UserController:
+        public: true
+    
+    property_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\PropertyNormalizer
+        tags:
+            - { name: serializer.normalizer }
+    array_denormalizer:
+        class: App\Repository\PerudoDenormalizer
+        tags:
+            - { name: serializer.denormalizer }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
