@@ -40,7 +40,7 @@ class PerudoFirebaseRepository
             ],
             'playersNames' => $perudo->playersNames(),
             'lastBet' => is_null($perudo->lastBet()) ? [] : [
-                'diceValue' => $perudo->lastBet()->diceValue(),
+                'diceValue' => $perudo->lastBet()->diceValue()->value(),
                 'diceNumber' => $perudo->lastBet()->diceNumber(),
                 'playerName' => $perudo->lastBet()->playerName(),
             ]
