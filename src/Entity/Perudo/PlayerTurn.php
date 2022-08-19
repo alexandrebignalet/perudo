@@ -32,7 +32,12 @@ class PlayerTurn
 
     public function goNext(): void
     {
-        $this->current = $this->current === $this->count - 1 ? 0 : $this->current + 1;
+        $this->current = $this->nextIndex();
+    }
+
+    public function next(): Player
+    {
+        return $this->activePlayers[$this->nextIndex()];
     }
 
     public function goPrev(): void
@@ -97,5 +102,13 @@ class PlayerTurn
     {
         if ($this->count > 1) return null;
         return $this->current()->name();
+    }
+
+    /**
+     * @return int
+     */
+    public function nextIndex(): int
+    {
+        return $this->current === $this->count - 1 ? 0 : $this->current + 1;
     }
 }

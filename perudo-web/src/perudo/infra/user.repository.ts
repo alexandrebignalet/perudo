@@ -13,13 +13,15 @@ export class UserRepository {
         return new UserModel(userJson.uuid, userJson.name);
     }
 
-    async create(name: string) {
+    async getOrCreate(name?: string) {
+        if (!name && !this.getStoredUser()) return;
         const response = await fetch(`${this.backEndUrl}/users`, {
             method: 'PUT',
+            credentials: "include",
             headers: {'Content-Type': 'application/json'},
             mode: 'cors',
             body: JSON.stringify({
-                uuid: this.getStoredUser() || 'generate_new',
+                uuid: this.getStoredUser()?.id || 'generate_new',
                 name
             })
         })

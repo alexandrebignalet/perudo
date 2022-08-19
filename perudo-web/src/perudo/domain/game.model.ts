@@ -19,6 +19,10 @@ export class GameModel {
     contains(currentUser: UserModel): boolean {
         return !!this.playersNames.find(name => name === currentUser.id)
     }
+
+    isStarted(): boolean {
+        return !!this.turn;
+    }
 }
 
 export class PlayerTurn {

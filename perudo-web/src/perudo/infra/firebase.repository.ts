@@ -42,7 +42,7 @@ export class FirebaseRepository {
         const gamesRefPath = `games`;
         const gamesRef = ref(this.db, gamesRefPath);
         onValue(gamesRef, (snapshot) => {
-            listener(Object.values(snapshot.val()).map(GameModel.fromSnapshot))
+            listener(Object.values(snapshot.val() || []).map(GameModel.fromSnapshot))
         })
     }
 

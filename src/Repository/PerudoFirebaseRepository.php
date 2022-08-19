@@ -30,6 +30,7 @@ class PerudoFirebaseRepository
                 'current' => $perudo->turn()->current()->name(),
                 'isPalefico' => $perudo->turn()->isPalefico(),
                 'prev' => $perudo->turn()->prev()->name(),
+                'next' => $perudo->turn()->next()->name(),
                 'activePlayers' => array_map(function (Player $player) {
                     return [
                         'isPalefico' => $player->isPalefico(),
