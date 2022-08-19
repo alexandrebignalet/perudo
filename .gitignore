@@ -2,4 +2,4 @@
 vendor
 var
 .idea
-.env
+.env.local
