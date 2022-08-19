@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: cd perudo-web && yarn test && yarn build
+      - run: cd perudo-web && yarn && yarn test && yarn build
 
   deploy-back:
     needs: build-back
@@ -64,7 +64,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: cd perudo-web && yarn build && yarn deploy
+      - run: cd perudo-web && yarn && yarn build && yarn deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
