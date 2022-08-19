@@ -28,12 +28,12 @@ function App() {
 
     const createUser = useCallback(() => {
         createUserUseCase.handle(userName!).then(setCurrentUser)
-    }, [userName]);
+    }, [createUserUseCase, userName]);
 
     useEffect(() => {
         if (!currentUser) return;
         availableGameToJoinUseCase.query(setGames);
-    }, [currentUser])
+    }, [availableGameToJoinUseCase, currentUser])
 
     const join = () => {
         console.log("joined");
