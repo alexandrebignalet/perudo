@@ -64,10 +64,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: cd perudo-web && yarn && yarn build && yarn deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_AB_PERUDO_GAME }}"
           projectId: ab-perudo-game
           channelId: live
+      - run: cd perudo-web && yarn && yarn build && yarn deploy
+      
