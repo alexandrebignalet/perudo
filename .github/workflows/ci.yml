@@ -5,8 +5,8 @@ on:
   pull_request:
 
 jobs:
-  build:
-    name: Build
+  build-back:
+    name: Build back
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,9 +29,22 @@ jobs:
 
       - name: Run tests
         run: SYMFONY_DEPRECATIONS_HELPER='max[total]=5&max[self]=0&max[direct]=0&max[indirect]=5' php ./vendor/bin/phpunit
-  deploy:
-    needs: build
-    name: Deploy
+  
+  build-front:
+    name: Build front
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+                        - run: yarn test
+                        - run: yarn build
+
+  deploy-back:
+    needs: build-back
+    name: Deploy back
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -41,3 +54,22 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "hidden-ravine-52418"
           heroku_email: "alexandre.bignalet@gmail.com"
+  
+  deploy-front:
+    needs: build-front
+    name: Deploy front
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+                          - run: yarn build
+                          - run: yarn deploy
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_AB_PERUDO_GAME }}"
+          projectId: ab-perudo-game
+          channelId: live
