@@ -36,11 +36,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 14.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 14.x
-                        - run: yarn test
-                        - run: yarn build
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn test
+      - run: yarn build
 
   deploy-back:
     needs: build-back
@@ -65,8 +65,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-                          - run: yarn build
-                          - run: yarn deploy
+      - run: yarn build
+      - run: yarn deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
