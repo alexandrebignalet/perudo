@@ -1,5 +1,0 @@
-export class FirebaseRepository {
-  constructor() {
-  }
-
-}
