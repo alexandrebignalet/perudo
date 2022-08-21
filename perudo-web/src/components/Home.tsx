@@ -1,59 +1,59 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import {UserRepository} from "../perudo/infra/user.repository";
-import {UserModel} from "../perudo/domain/user.model";
-import {GameModel} from "../perudo/domain/game.model";
-import {PerudoRepository} from "../perudo/infra/perudo.repository";
-import {FirebaseRepository} from "../perudo/infra/firebase.repository";
-import {useNavigate} from "react-router-dom";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { UserRepository } from '../perudo/infra/user.repository';
+import { UserModel } from '../perudo/domain/user.model';
+import { GameModel } from '../perudo/domain/game.model';
+import { PerudoRepository } from '../perudo/infra/perudo.repository';
+import { FirebaseRepository } from '../perudo/infra/firebase.repository';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
-    userRepository: UserRepository;
-    perudoRepository: PerudoRepository;
-    projectionRepository: FirebaseRepository;
-    currentUserState: [UserModel | undefined, (user: UserModel | undefined) => void],
-}
+  userRepository: UserRepository;
+  perudoRepository: PerudoRepository;
+  projectionRepository: FirebaseRepository;
+  currentUserState: [UserModel | undefined, (user: UserModel | undefined) => void],
+};
 
 export const Home: React.FC<Props> = ({
-                                          userRepository,
-                                          perudoRepository,
-                                          projectionRepository,
-                                          currentUserState: [currentUser, setCurrentUser]
-                                      }) => {
-    const navigate = useNavigate();
-    const [userName, setUserName] = useState<string>(currentUser?.name || '');
-    const [games, setGames] = useState<GameModel[]>([]);
-    const tryLogIn = useRef(false);
+  userRepository,
+  perudoRepository,
+  projectionRepository,
+  currentUserState: [currentUser, setCurrentUser],
+}) => {
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState<string>(currentUser?.name || '');
+  const [games, setGames] = useState<GameModel[]>([]);
+  const tryLogIn = useRef(false);
 
-    const getOrCreateUser = useCallback((userName?: string) => userRepository.getOrCreate(userName).then(user => {
-        setCurrentUser(user);
-        return user;
-    }), [userRepository, setCurrentUser]);
+  const getOrCreateUser = useCallback((userNameInput?: string) => userRepository.getOrCreate(userNameInput).then(user => {
+    setCurrentUser(user);
+    return user;
+  }), [userRepository, setCurrentUser]);
 
-    useEffect(() => {
-        if (tryLogIn.current) return;
-        tryLogIn.current = true;
-        getOrCreateUser();
-        projectionRepository.games(setGames);
-    }, [getOrCreateUser, projectionRepository])
+  useEffect(() => {
+    if (tryLogIn.current) return;
+    tryLogIn.current = true;
+    getOrCreateUser();
+    projectionRepository.games(setGames);
+  }, [getOrCreateUser, projectionRepository]);
 
-    const join = (game: GameModel) => {
-        if (!currentUser) return;
+  const join = (game: GameModel) => {
+    if (!currentUser) return;
 
-        if (game.contains(currentUser)) {
-            navigate(`games/${game.id}`);
-            return;
-        }
-
-        return perudoRepository.join(game.id)
-            .then(() => navigate(`games/${game.id}`));
+    if (game.contains(currentUser)) {
+      navigate(`games/${game.id}`);
+      return;
     }
 
-    const create = () => {
-        perudoRepository.create()
-            .then(() => projectionRepository.games(setGames))
-    }
+    return perudoRepository.join(game.id)
+      .then(() => navigate(`games/${game.id}`));
+  };
 
-    return <>
+  const create = () => {
+    perudoRepository.create()
+      .then(() => projectionRepository.games(setGames));
+  };
+
+  return <>
         {
             currentUser && (
                 <div>
@@ -82,5 +82,5 @@ export const Home: React.FC<Props> = ({
                 </div>
             )
         }
-    </>
-}
+    </>;
+};

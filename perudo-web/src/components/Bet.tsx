@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import {BetModel} from "../perudo/domain/game.model";
+import React from 'react';
+import styled from 'styled-components';
+import { BetModel } from '../perudo/domain/game.model';
 
 type Props = {
-    bet?: BetModel;
-}
+  bet?: BetModel;
+};
 
 
 const Style = styled.div`
@@ -24,9 +24,9 @@ const DiceValue = styled.div`
     text-align: center;
 `;
 
-export const Bet: React.FC<Props> = ({bet}) => {
-    return (<Style>
-        <DiceNumber>{bet?.diceNumber || "-"}</DiceNumber>
-        <DiceValue>{bet?.diceValue || "-"}</DiceValue>
-    </Style>)
-}
+export const Bet: React.FC<Props> = ({ bet }) => {
+  return (<Style>
+        <DiceNumber>{bet?.diceNumber || '-'}</DiceNumber>
+        <DiceValue>{bet?.diceValue || '-'}</DiceValue>
+    </Style>);
+};
