@@ -5,18 +5,20 @@ import { Bet } from './Bet';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
 import { FirebaseRepository } from '../perudo/infra/firebase.repository';
 import { NewBet } from './NewBet';
-import { UserModel } from '../perudo/domain/user.model';
 import { toast } from 'react-toastify';
+import { UserService } from '../perudo/infra/user.service';
 
 interface Props {
   perudoRepository: PerudoRepository
   projectionRepository: FirebaseRepository
-  currentUser: UserModel | undefined
+  userService: UserService
 }
 
-export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository, currentUser }) => {
+export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository, userService }) => {
   const { id: gameId } = useParams<{ id: string }>();
   const [game, setGame] = useState<GameModel | undefined>(undefined);
+  const currentUser = userService.getCurrentUser();
+
   const toastIds = React.useRef<string[]>([]);
 
   const alertOnStateChange = (newGameState: GameModel | undefined, prevGameState: GameModel | undefined) => {
@@ -43,12 +45,12 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
     }
   };
 
-  const onGameUpdated = (newGameState: GameModel | undefined) => {
+  const onGameUpdated = useCallback((newGameState: GameModel | undefined) => {
     return setGame((prevGameState: GameModel | undefined) => {
       alertOnStateChange(newGameState, prevGameState);
       return newGameState;
     });
-  };
+  }, []);
 
   useEffect(() => {
     if (!gameId) return;

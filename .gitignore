@@ -3,3 +3,4 @@ vendor
 var
 .idea
 .env.local
+firebase-debug.log

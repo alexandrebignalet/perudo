@@ -13,8 +13,7 @@ export class UserRepository {
     return new UserModel(userJson.uuid, userJson.name);
   }
 
-  async getOrCreate(name?: string): Promise<UserModel | undefined> {
-    if (!name && (this.getStoredUser() == null)) return;
+  async create(name: string): Promise<UserModel> {
     const response = await fetch(`${this.backEndUrl}/users`, {
       method: 'PUT',
       credentials: 'include',
@@ -29,7 +28,6 @@ export class UserRepository {
     const body = await response.json();
 
     if (!response.ok) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Fail to create user - ${body}`);
     }
 

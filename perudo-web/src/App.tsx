@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import './App.css';
 import { FirebaseRepository } from './perudo/infra/firebase.repository';
 import { UserRepository } from './perudo/infra/user.repository';
@@ -9,7 +9,7 @@ import { Perudo } from './components/Perudo';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.min.css';
-import { UserModel } from './perudo/domain/user.model';
+import { UserService } from './perudo/infra/user.service';
 
 function App() {
 
@@ -22,7 +22,7 @@ function App() {
 
   const perudoRepository = new PerudoRepository(backEndUrl);
   const userRepository = new UserRepository(backEndUrl);
-  const currentUserState = useState<UserModel | undefined>(userRepository.getStoredUser());
+  const userService = new UserService(userRepository);
 
   return (
         <div className="App">
@@ -42,8 +42,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={
                         <Home
-                            currentUserState={currentUserState}
-                            userRepository={userRepository}
+                            userService={userService}
                             perudoRepository={perudoRepository}
                             projectionRepository={projectionRepository.current}
                         />
@@ -53,7 +52,7 @@ function App() {
                         <Route path=":id" element={
                             <Perudo perudoRepository={perudoRepository}
                                     projectionRepository={projectionRepository.current}
-                                    currentUser={currentUserState[0]}
+                                    userService={userService}
                             />
                         }/>
                     </Route>

@@ -1,40 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { UserRepository } from '../perudo/infra/user.repository';
-import { UserModel } from '../perudo/domain/user.model';
+import React, { useEffect, useState } from 'react';
 import { GameModel } from '../perudo/domain/game.model';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
 import { FirebaseRepository } from '../perudo/infra/firebase.repository';
 import { useNavigate } from 'react-router-dom';
+import { UserService } from '../perudo/infra/user.service';
 
 type Props = {
-  userRepository: UserRepository;
+  userService: UserService;
   perudoRepository: PerudoRepository;
   projectionRepository: FirebaseRepository;
-  currentUserState: [UserModel | undefined, (user: UserModel | undefined) => void],
 };
 
 export const Home: React.FC<Props> = ({
-  userRepository,
+  userService,
   perudoRepository,
   projectionRepository,
-  currentUserState: [currentUser, setCurrentUser],
 }) => {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(userService.getCurrentUser());
   const [userName, setUserName] = useState<string>(currentUser?.name || '');
   const [games, setGames] = useState<GameModel[]>([]);
-  const tryLogIn = useRef(false);
-
-  const getOrCreateUser = useCallback((userNameInput?: string) => userRepository.getOrCreate(userNameInput).then(user => {
-    setCurrentUser(user);
-    return user;
-  }), [userRepository, setCurrentUser]);
 
   useEffect(() => {
-    if (tryLogIn.current) return;
-    tryLogIn.current = true;
-    getOrCreateUser();
+    if (!currentUser) return;
     projectionRepository.games(setGames);
-  }, [getOrCreateUser, projectionRepository]);
+  }, [currentUser, projectionRepository]);
 
   const join = (game: GameModel) => {
     if (!currentUser) return;
@@ -51,6 +41,10 @@ export const Home: React.FC<Props> = ({
   const create = () => {
     perudoRepository.create()
       .then(() => projectionRepository.games(setGames));
+  };
+
+  const createUser = () => {
+    userService.createUser(userName).then(setCurrentUser);
   };
 
   return <>
@@ -78,7 +72,7 @@ export const Home: React.FC<Props> = ({
                     <input type="text" placeholder="entre ton nom" value={userName}
                            onChange={(event) => setUserName(event.target.value)}/>
 
-                    <button type="button" onClick={() => getOrCreateUser(userName)} disabled={!userName}>Go</button>
+                    <button type="button" onClick={createUser} disabled={!userName}>Go</button>
                 </div>
             )
         }
