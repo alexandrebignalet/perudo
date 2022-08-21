@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Serializer;
 
 use App\Entity\Perudo\Bet;
 use App\Entity\Perudo\DiceValue;

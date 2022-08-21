@@ -70,6 +70,10 @@ class Bet
         if (!is_null($previousBet) && $currentDiceNumber == $previousBet->diceNumber() && $currentDiceValue->hasSameValue($previousBet->diceValue())) {
             throw new InvalidArgumentException("Tu dois augmenter la valeur ou le nombre de dé!");
         }
+
+        if (!is_null($previousBet) && !$previousBet->isPacoBet() && $currentDiceNumber > $previousBet->diceNumber() && $currentDiceValue->isGreaterThan($previousBet->diceValue())) {
+            throw new InvalidArgumentException("Tu dois augmenter la valeur ou le nombre de dé!");
+        }
     }
 
     #[Pure] private static function allowedDiceValueRange(?Bet $previousBet): array
@@ -88,8 +92,13 @@ class Bet
         if (is_null($previousBet)) {
             return 1;
         }
+
         if ($isPacoBet) {
             return $previousBet->minimumPacoDiceNumber($previousBet->diceValue() instanceof Paco);
+        }
+
+        if ($previousBet->isPacoBet()) {
+            return 2 * $previousBet->diceNumber() + 1;
         }
 
         return $previousBet->diceNumber();
@@ -112,6 +121,11 @@ class Bet
         if (!$diceValue->hasSameValue($previousBet->diceValue())) {
             throw new InvalidArgumentException("Tu ne peux pas changer la valeur durant le palefico");
         }
+    }
+
+    private function isPacoBet(): bool
+    {
+        return $this->diceValue instanceof Paco;
     }
 
 

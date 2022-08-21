@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export class PerudoRepository {
 
     constructor(private backEndUrl: string) {
@@ -12,6 +14,7 @@ export class PerudoRepository {
         })
 
         if (!response.ok) {
+            await PerudoRepository.handleException(response);
             throw new Error("Fail to create game");
         }
     }
@@ -25,6 +28,7 @@ export class PerudoRepository {
         })
 
         if (!response.ok) {
+            await PerudoRepository.handleException(response);
             throw new Error("Fail to join game - " + gameId);
         }
     }
@@ -40,6 +44,7 @@ export class PerudoRepository {
         const body = await response.json();
 
         if (!response.ok) {
+            await PerudoRepository.handleException(response);
             throw new Error("Fail to start a game" + body);
         }
 
@@ -59,6 +64,7 @@ export class PerudoRepository {
         })
 
         if (!response.ok) {
+            await PerudoRepository.handleException(response);
             throw new Error("Fail to bet on game - " + JSON.stringify({diceNumber, diceValue, gameId}));
         }
     }
@@ -72,7 +78,14 @@ export class PerudoRepository {
         })
 
         if (!response.ok) {
+            await PerudoRepository.handleException(response);
             throw new Error("Fail to contest on game - " + JSON.stringify({gameId}));
         }
+    }
+
+    private static async handleException(response: Response) {
+        const body = await response.json();
+        let errorMessage = `${body.exception.message}`;
+        toast(errorMessage, {type: 'error', icon: "🦄"});
     }
 }

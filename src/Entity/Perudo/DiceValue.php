@@ -51,4 +51,9 @@ class DiceValue
 
         return $value == $this->value;
     }
+
+    public function isGreaterThan(DiceValue $diceValue)
+    {
+        return $this->value > $diceValue->value();
+    }
 }

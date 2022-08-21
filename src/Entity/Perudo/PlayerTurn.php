@@ -54,7 +54,8 @@ class PlayerTurn
     {
         $isContestSucceeded = $lastBet->diceNumber() > $this->countAllDicesWithLastBetValue($lastBet->diceValue());
 
-        $this->activePlayers = array_map(fn(Player $player): Player => $this->prev()->name() == $player->name()
+        $looserName = $isContestSucceeded ? $this->prev()->name() : $this->current()->name();
+        $this->activePlayers = array_map(fn(Player $player): Player => $looserName == $player->name()
             ? $player->looseDice($this->diceLauncher)
             : $player->rerollDices($this->diceLauncher), $this->activePlayers);
 

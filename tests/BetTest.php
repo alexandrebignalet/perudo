@@ -90,7 +90,7 @@ class BetTest extends TestCase
         $this->assertEquals($this->game->lastBet(), $expectedLastBet);
     }
 
-    public function test_should_throw_when_dice_value_is_Perudo_when_no_last_bet()
+    public function test_should_throw_when_dice_value_is_Paco_when_no_last_bet()
     {
         // GIVEN
         $this->expectException(InvalidArgumentException::class);
@@ -101,7 +101,7 @@ class BetTest extends TestCase
         $this->game->bet($this->currentPlayerName, $diceNumber, $diceValue);
     }
 
-    public function test_should_allow_Perudo_bet_when_a_last_bet_exists()
+    public function test_should_allow_Paco_bet_when_a_last_bet_exists()
     {
         // GIVEN
         $diceNumber = 2;
@@ -127,6 +127,7 @@ class BetTest extends TestCase
         $toLowDiceNumber = 1;
         $this->game->bet($this->game->currentPlayerName(), $toLowDiceNumber, Bet::$PACO);
     }
+
 
     public function test_should_set_next_player_as_current_player_after_a_valid_bet_placed()
     {
@@ -154,6 +155,16 @@ class BetTest extends TestCase
 
         // WHEN
         $this->game->bet($this->game->currentPlayerName(), 3, 5);
+    }
+
+    public function test_should_throw_when_bet_dice_number_and_dice_value_are_increased_in_the_same_bet()
+    {
+        // GIVEN
+        $this->expectException(InvalidArgumentException::class);
+        $this->game->bet($this->game->currentPlayerName(), 4, 5);
+
+        // WHEN
+        $this->game->bet($this->game->currentPlayerName(), 5, 6);
     }
 
     public function test_should_throw_when_bet_is_the_same_as_previous()
@@ -192,6 +203,22 @@ class BetTest extends TestCase
         $this->assertEquals($this->game->lastBet()->playerName(), $firstPlayerName);
     }
 
+    public function test_should_allow_increase_both_dice_value_and_number_when_going_back_to_normal_bet_when_previous_is_paco_bet()
+    {
+        // GIVEN
+        $firstPlayerName = $this->game->currentPlayerName();
+        $this->game->bet($firstPlayerName, 4, 5);
+        $this->game->bet($this->game->currentPlayerName(), 2, Paco::$VALUE);
+
+        // WHEN
+        $this->game->bet($this->game->currentPlayerName(), 5, 3);
+
+        // THEN
+        $this->assertEquals($this->game->lastBet()->diceValue(), DiceValue::of(3));
+        $this->assertEquals($this->game->lastBet()->diceNumber(), 5);
+        $this->assertEquals($this->game->lastBet()->playerName(), $firstPlayerName);
+    }
+
     public function test_should_throw_when_dice_number_is_lower_than_previous_paco_bet_one()
     {
         // GIVEN
@@ -201,5 +228,16 @@ class BetTest extends TestCase
 
         // WHEN
         $this->game->bet($this->game->currentPlayerName(), 1, Paco::$VALUE);
+    }
+
+    public function test_should_throw_when_no_paco_dice_number_is_lower_than_2_times_previous_paco_bet_dice_number()
+    {
+        // GIVEN
+        $this->expectException(InvalidArgumentException::class);
+        $this->game->bet($this->game->currentPlayerName(), 1, 2);
+        $this->game->bet($this->game->currentPlayerName(), 1, Paco::$VALUE);
+
+        // WHEN
+        $this->game->bet($this->game->currentPlayerName(), 1, 2);
     }
 }

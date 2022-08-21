@@ -3,16 +3,18 @@ import {UserModel} from "./user.model";
 export class GameModel {
     constructor(public id: string,
                 public playersNames: string[],
-                public turn?: PlayerTurn,
-                public lastBet?: Bet) {
+                public winner?: string,
+                public turn?: PlayerTurnModel,
+                public lastBet?: BetModel) {
     }
 
     static fromSnapshot(snapshot: any): GameModel {
         return new GameModel(
             snapshot.id,
             snapshot.playersNames || [],
-            PlayerTurn.fromSnapshot(snapshot.turn),
-            Bet.fromSnapshot(snapshot.lastBet)
+            snapshot.winner,
+            PlayerTurnModel.fromSnapshot(snapshot.turn),
+            BetModel.fromSnapshot(snapshot.lastBet)
         );
     }
 
@@ -23,19 +25,35 @@ export class GameModel {
     isStarted(): boolean {
         return !!this.turn;
     }
+
+    allowPacoBet() {
+        return !!this.lastBet;
+    }
+
+    isCurrentPlayer(userId: string | undefined) {
+        return this.turn?.current === userId;
+    }
+
+    findActivePlayer(userId: string | undefined) {
+        return this.turn?.activePlayers.find((player) => player.name === userId);
+    }
+
+    diceCount(): number | undefined {
+        return this.turn?.activePlayers.reduce((acc, player) => acc + player.dices.length, 0);
+    }
 }
 
-export class PlayerTurn {
-    constructor(public activePlayers: ActivePlayer[],
+export class PlayerTurnModel {
+    constructor(public activePlayers: ActivePlayerModel[],
                 public current: string,
                 public isPalefico: boolean,
                 public prev: string) {
     }
 
-    static fromSnapshot(turn: any): PlayerTurn | undefined {
+    static fromSnapshot(turn: any): PlayerTurnModel | undefined {
         if (!turn) return undefined;
-        return new PlayerTurn(
-            turn.activePlayers.map((player: any) => ActivePlayer.fromSnapshot(player)),
+        return new PlayerTurnModel(
+            turn.activePlayers.map((player: any) => ActivePlayerModel.fromSnapshot(player)),
             turn.current,
             turn.isPalefico,
             turn.prev,
@@ -43,10 +61,10 @@ export class PlayerTurn {
     }
 }
 
-export class ActivePlayer {
+export class ActivePlayerModel {
 
-    static fromSnapshot(activePlayer: any): ActivePlayer {
-        return new ActivePlayer(
+    static fromSnapshot(activePlayer: any): ActivePlayerModel {
+        return new ActivePlayerModel(
             activePlayer.dices,
             activePlayer.isPalefico,
             activePlayer.name
@@ -59,13 +77,13 @@ export class ActivePlayer {
     }
 }
 
-export class Bet {
+export class BetModel {
     constructor(public diceNumber: number, public diceValue: number, playerName: string) {
     }
 
-    static fromSnapshot(lastBet: any): Bet | undefined {
+    static fromSnapshot(lastBet: any): BetModel | undefined {
         if (!lastBet) return undefined;
-        return new Bet(
+        return new BetModel(
             lastBet.diceNumber,
             lastBet.diceValue,
             lastBet.playerName

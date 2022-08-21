@@ -6,7 +6,7 @@ use App\Entity\Perudo\Bet;
 use App\Entity\Perudo\Perudo;
 use App\Entity\Perudo\Player;
 use App\Entity\Perudo\PlayerTurn;
-use App\Repository\PerudoDenormalizer;
+use App\Serializer\PerudoDenormalizer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;

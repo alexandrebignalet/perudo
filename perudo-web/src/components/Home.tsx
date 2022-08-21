@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {UserRepository} from "../perudo/infra/user.repository";
 import {UserModel} from "../perudo/domain/user.model";
 import {GameModel} from "../perudo/domain/game.model";
@@ -10,20 +10,28 @@ type Props = {
     userRepository: UserRepository;
     perudoRepository: PerudoRepository;
     projectionRepository: FirebaseRepository;
+    currentUserState: [UserModel | undefined, (user: UserModel | undefined) => void],
 }
 
-export const Home: React.FC<Props> = ({userRepository, perudoRepository, projectionRepository}) => {
+export const Home: React.FC<Props> = ({
+                                          userRepository,
+                                          perudoRepository,
+                                          projectionRepository,
+                                          currentUserState: [currentUser, setCurrentUser]
+                                      }) => {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<UserModel | undefined>(userRepository.getStoredUser());
     const [userName, setUserName] = useState<string>(currentUser?.name || '');
     const [games, setGames] = useState<GameModel[]>([]);
+    const tryLogIn = useRef(false);
 
     const getOrCreateUser = useCallback((userName?: string) => userRepository.getOrCreate(userName).then(user => {
         setCurrentUser(user);
         return user;
-    }), [userRepository]);
+    }), [userRepository, setCurrentUser]);
 
     useEffect(() => {
+        if (tryLogIn.current) return;
+        tryLogIn.current = true;
         getOrCreateUser();
         projectionRepository.games(setGames);
     }, [getOrCreateUser, projectionRepository])
