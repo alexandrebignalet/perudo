@@ -59,6 +59,9 @@ jobs:
     name: Deploy front
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    env:
+      REACT_APP_BACK_END_URL: ${{ secrets.REACT_APP_BACK_END_URL }}
+      REACT_APP_DATABASE_URL: ${{ secrets.REACT_APP_DATABASE_URL }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
