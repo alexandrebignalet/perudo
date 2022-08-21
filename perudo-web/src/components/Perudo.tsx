@@ -54,7 +54,7 @@ export const Perudo: React.FC<Props> = ({perudoRepository, projectionRepository,
     useEffect(() => {
         if (!gameId) return;
         projectionRepository.game(gameId, onGameUpdated);
-    }, [projectionRepository, game, onGameUpdated()])
+    }, [projectionRepository, game, onGameUpdated])
 
     const start = useCallback(() => {
         if (!game) return;
