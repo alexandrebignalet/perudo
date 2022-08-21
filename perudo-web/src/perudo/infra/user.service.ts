@@ -5,7 +5,13 @@ export class UserService {
   private currentUser?: UserModel = undefined;
 
   constructor(private readonly userRepository: UserRepository) {
-    this.currentUser = userRepository.getStoredUser();
+    const currentUser = userRepository.getStoredUser();
+    if (currentUser) {
+      this.userRepository.createOrRefresh(currentUser.name)
+        .then((user) => {
+          this.currentUser = user;
+        });
+    }
   }
 
   getCurrentUser(): UserModel | undefined {
@@ -13,7 +19,7 @@ export class UserService {
   }
 
   createUser(name: string): Promise<UserModel> {
-    return this.userRepository.create(name)
+    return this.userRepository.createOrRefresh(name)
       .then(user => {
         this.currentUser = user;
         return user;

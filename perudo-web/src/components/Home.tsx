@@ -68,7 +68,7 @@ export const Home: React.FC<Props> = ({
         {
             !currentUser && (
                 <div>
-                    <label>Choisi un nom</label>
+                    <label>Choisis un nom</label>
                     <input type="text" placeholder="entre ton nom" value={userName}
                            onChange={(event) => setUserName(event.target.value)}/>
 

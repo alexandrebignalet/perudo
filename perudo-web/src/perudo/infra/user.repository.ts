@@ -13,7 +13,7 @@ export class UserRepository {
     return new UserModel(userJson.uuid, userJson.name);
   }
 
-  async create(name: string): Promise<UserModel> {
+  async createOrRefresh(name: string): Promise<UserModel> {
     const response = await fetch(`${this.backEndUrl}/users`, {
       method: 'PUT',
       credentials: 'include',
