@@ -19,7 +19,7 @@ export const NewBet: React.FC<Props> = ({game, perudoRepository}) => {
     const doBet = useCallback(() => {
         if (!game || !bet.value || !bet.number) return;
         perudoRepository.bet(game.id, bet.number, bet.value);
-    }, [game, bet]);
+    }, [game, bet, perudoRepository]);
 
     return <div>
         <label>Dice number</label>
