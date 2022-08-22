@@ -3,7 +3,7 @@ import { UserModel } from '../domain/user.model';
 export class UserRepository {
   private static readonly key = 'user';
 
-  constructor(private readonly backEndUrl: string) {
+  constructor(private readonly backEndUrl: string, private setLoading: (loading: boolean) => void) {
   }
 
   getStoredUser(): UserModel | undefined {
@@ -14,6 +14,8 @@ export class UserRepository {
   }
 
   async createOrRefresh(name: string): Promise<UserModel> {
+    this.setLoading(true);
+
     const response = await fetch(`${this.backEndUrl}/users`, {
       method: 'PUT',
       credentials: 'include',
@@ -23,7 +25,8 @@ export class UserRepository {
         uuid: this.getStoredUser()?.id ?? 'generate_new',
         name,
       }),
-    });
+    })
+      .finally(() => this.setLoading(false));
 
     const body = await response.json();
 

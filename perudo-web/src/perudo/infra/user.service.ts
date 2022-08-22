@@ -5,9 +5,9 @@ export class UserService {
   private currentUser?: UserModel = undefined;
 
   constructor(private readonly userRepository: UserRepository) {
-    const currentUser = userRepository.getStoredUser();
-    if (currentUser) {
-      this.userRepository.createOrRefresh(currentUser.name)
+    this.currentUser = userRepository.getStoredUser();
+    if (this.currentUser) {
+      this.userRepository.createOrRefresh(this.currentUser.name)
         .then((user) => {
           this.currentUser = user;
         });

@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GameModel } from '../perudo/domain/game.model';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
 import { FirebaseRepository } from '../perudo/infra/firebase.repository';
 import { useNavigate } from 'react-router-dom';
 import { UserService } from '../perudo/infra/user.service';
+import { Box, HomeLoggedIn, InputContainer, PerudoButton, PerudoButtonText, PerudoInput } from '../Styles';
+import { PlayerList } from './PlayerList';
 
 type Props = {
   userService: UserService;
   perudoRepository: PerudoRepository;
   projectionRepository: FirebaseRepository;
+  setLoading: (loading: boolean) => void;
 };
 
 export const Home: React.FC<Props> = ({
@@ -47,33 +50,58 @@ export const Home: React.FC<Props> = ({
     userService.createUser(userName).then(setCurrentUser);
   };
 
+  const availableGames = useMemo(() => {
+    if (!currentUser) return [];
+    return games.filter((game) =>
+      (game.isStarted() && game.contains(currentUser))
+            || (!game.isStarted()),
+    );
+  }, [currentUser, games]);
+
+
   return <>
         {
             currentUser && (
-                <div>
-                    <h3>Hello {currentUser.name}</h3>
+                <HomeLoggedIn>
 
-                    <button type="button" onClick={create}>Nouvelle partie</button>
+                    <PerudoButton type="button" onClick={create}>
+                        <PerudoButtonText size={'l'}>créer</PerudoButtonText>
+                    </PerudoButton>
 
-                    {games.map((game) =>
-                        <div key={game.id}>
-                            <p>{game.id}</p>
-                            <p>{game.playersNames.length}</p>
-                            <button onClick={() => join(game)}>join</button>
-                        </div>)
+                    {availableGames.map((game) =>
+                        <Box key={game.id} title={game.id}>
+                            <div>
+                                {game.isStarted()
+                                  ? `👀 ${game.userGameIds.length} singes sont en jeu: `
+                                  : game.userGameIds.length < 6
+                                    ? game.userGameIds.length === 1
+                                      ? '1 singe t\'attend: '
+                                      : `${game.userGameIds.length} singes t'attendent: `
+                                    : 'le bar à singes est plein: '
+                                }
+
+                                <PlayerList game={game}/>
+                            </div>
+                            <PerudoButton onClick={() => join(game)}>
+                                <PerudoButtonText size={'m'}>rejoindre</PerudoButtonText>
+                            </PerudoButton>
+                        </Box>)
                     }
-                </div>
+                </HomeLoggedIn>
             )
         }
         {
             !currentUser && (
-                <div>
-                    <label>Choisis un nom</label>
-                    <input type="text" placeholder="entre ton nom" value={userName}
-                           onChange={(event) => setUserName(event.target.value)}/>
+                <>
+                    <InputContainer>
+                        <PerudoInput type="text" autoFocus placeholder="cliques ici et donne ton nom" value={userName}
+                                     onChange={(event) => setUserName(event.target.value)}/>
+                    </InputContainer>
 
-                    <button type="button" onClick={createUser} disabled={!userName}>Go</button>
-                </div>
+                    <PerudoButton type="button" onClick={createUser} disabled={!userName}>
+                        <PerudoButtonText size={'l'} disabled={!userName}>fini</PerudoButtonText>
+                    </PerudoButton>
+                </>
             )
         }
     </>;

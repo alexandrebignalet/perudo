@@ -7,6 +7,9 @@ import { FirebaseRepository } from '../perudo/infra/firebase.repository';
 import { NewBet } from './NewBet';
 import { toast } from 'react-toastify';
 import { UserService } from '../perudo/infra/user.service';
+import { Box, Column, GamePlayerList, PerudoButton, PerudoButtonText, Typography } from '../Styles';
+import { PlayerList } from './PlayerList';
+import { UserModel } from '../perudo/domain/user.model';
 
 interface Props {
   perudoRepository: PerudoRepository
@@ -17,6 +20,7 @@ interface Props {
 export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository, userService }) => {
   const { id: gameId } = useParams<{ id: string }>();
   const [game, setGame] = useState<GameModel | undefined>(undefined);
+  const [showDice, setShowDice] = useState<boolean>(false);
   const currentUser = userService.getCurrentUser();
 
   const toastIds = React.useRef<string[]>([]);
@@ -68,34 +72,56 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
   }, [game, perudoRepository]);
 
   return (<div>
-            <pre>{JSON.stringify(game)}</pre>
-
             {game?.isStarted() && (<>
-                    <ul>
-                        {game.turn?.activePlayers.map((player) => <li
-                            key={player.name}>{player.name} {game?.isCurrentPlayer(player.name) &&
-                            <span>*</span>}</li>)}
-                    </ul>
+                    <Box>
+                        <GamePlayerList>
+                            {game.turn?.activePlayers.map((player) =>
+                                <li key={player.name}>
+                                    {UserModel.emoji(GameModel.idOf(player.name))}
+                                    {' '}
+                                    {GameModel.nameOf(player.name)}
+                                    {' '}
+                                    {game?.isCurrentPlayer(player.name) && <Typography size={'m'}
+                                                                                       shake={game?.isCurrentPlayer(currentUser?.id)}>✋</Typography>}
+                                </li>)}
+                        </GamePlayerList>
+                    </Box>
 
                     <Bet bet={game?.lastBet}/>
 
                     {game?.isCurrentPlayer(currentUser?.id) && (<>
                         <NewBet game={game} perudoRepository={perudoRepository}/>
 
-                        {!((game?.lastBet) == null) && <button type="button" onClick={contest}>Tu ments</button>}
+                        <Column>
+                            {!((game?.lastBet) == null) && <PerudoButton type="button" onClick={contest}>
+                                <PerudoButtonText size={'l'}>singerie!</PerudoButtonText>
+                            </PerudoButton>}
+                        </Column>
                     </>)}
 
-                    <ul>
+                    <Column>
+                        <PerudoButton type="button" onMouseDown={() => setShowDice(true)}
+                                      onMouseUp={() => setShowDice(false)}>
+                            <PerudoButtonText size={'l'}>{'voir'}</PerudoButtonText>
+                        </PerudoButton>
+                    </Column>
+                    {showDice && <ul>
                         {game?.findActivePlayer(currentUser?.id)?.dices.map((dice, index) => <li
                             key={`${index}-${dice}`}>{dice === 1 ? 'PACO' : dice}</li>)}
-                    </ul>
+                    </ul>}
                 </>
             )}
 
-            {!game?.isStarted() && (<>
-                <p>Game not started</p>
-                <button type="button" onClick={start}>Démarrer</button>
-            </>)}
+            {!game?.isStarted() && (<Box>
+                <p>{`${game?.userGameIds.length}
+                    singe${game?.userGameIds.length === 1 ? '' : 's'}
+                    présent${game?.userGameIds.length === 1 ? '' : 's'}: `}
+                    {game && <PlayerList game={game}/>}
+                </p>
+                <PerudoButton type="button" onClick={start} disabled={!game?.canStart()}>
+                    <PerudoButtonText size={'l'} disabled={!game?.canStart()}>{'let\'s gooo'}</PerudoButtonText>
+                </PerudoButton>
+            </Box>)}
 
         </div>
   );

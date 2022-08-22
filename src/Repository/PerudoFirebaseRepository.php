@@ -53,7 +53,7 @@ class PerudoFirebaseRepository
         $userRefPath = "/users/" . $user->uuid();
         $this->database->getReference($userRefPath)->set([
             'uuid' => $user->uuid(),
-            'name' => $user->name(),
+            'name' => $user->name()
         ]);
     }
 }

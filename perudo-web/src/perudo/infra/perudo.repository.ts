@@ -1,16 +1,18 @@
 import { toast } from 'react-toastify';
 
 export class PerudoRepository {
-  constructor(private readonly backEndUrl: string) {
+  constructor(private readonly backEndUrl: string, private setLoading: (loading: boolean) => void) {
   }
 
   async create(): Promise<void> {
+    this.setLoading(true);
     const response = await fetch(`${this.backEndUrl}/games`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       mode: 'cors',
-    });
+    })
+      .finally(() => this.setLoading(false));
 
     if (!response.ok) {
       await PerudoRepository.handleException(response);
@@ -19,12 +21,16 @@ export class PerudoRepository {
   }
 
   async join(gameId: string): Promise<void> {
+    this.setLoading(true);
+
     const response = await fetch(`${this.backEndUrl}/games/${gameId}/join`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       mode: 'cors',
-    });
+    })
+      .finally(() => this.setLoading(false));
+
 
     if (!response.ok) {
       await PerudoRepository.handleException(response);
@@ -33,24 +39,28 @@ export class PerudoRepository {
   }
 
   async start(gameId: string): Promise<string> {
+    this.setLoading(true);
+
     const response = await fetch(`${this.backEndUrl}/games/${gameId}/start`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       mode: 'cors',
-    });
-
-    const body = await response.json();
+    })
+      .finally(() => this.setLoading(false));
 
     if (!response.ok) {
       await PerudoRepository.handleException(response);
-      throw new Error(`Fail to start a game - ${body}`);
+      throw new Error('Fail to start a game');
     }
 
+    const body = await response.json();
     return body.id;
   }
 
   async bet(gameId: string, diceNumber: number, diceValue: number) {
+    this.setLoading(true);
+
     const response = await fetch(`${this.backEndUrl}/games/${gameId}/bet`, {
       method: 'POST',
       credentials: 'include',
@@ -60,7 +70,9 @@ export class PerudoRepository {
         number: diceNumber,
         value: diceValue,
       }),
-    });
+    })
+      .finally(() => this.setLoading(false));
+
 
     if (!response.ok) {
       await PerudoRepository.handleException(response);
@@ -69,12 +81,15 @@ export class PerudoRepository {
   }
 
   async contestLastBet(gameId: string) {
+    this.setLoading(true);
     const response = await fetch(`${this.backEndUrl}/games/${gameId}/contest`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       mode: 'cors',
-    });
+    })
+      .finally(() => this.setLoading(false));
+
 
     if (!response.ok) {
       await PerudoRepository.handleException(response);

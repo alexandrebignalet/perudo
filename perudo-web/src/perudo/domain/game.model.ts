@@ -49,8 +49,10 @@ export class BetModel {
 }
 
 export class GameModel {
+  private static USER_GAME_ID_SEPARATOR = '/$_perudo_$/';
+
   constructor(public id: string,
-    public playersNames: string[],
+    public userGameIds: string[],
     public winner?: string,
     public turn?: PlayerTurnModel,
     public lastBet?: BetModel) {
@@ -66,9 +68,18 @@ export class GameModel {
     );
   }
 
-  contains(currentUser: UserModel): boolean {
-    return !!this.playersNames.find(name => name === currentUser.id);
+  static nameOf(userGameId: string) {
+    return userGameId.split(GameModel.USER_GAME_ID_SEPARATOR)[1];
   }
+
+  static idOf(userGameId: string) {
+    return userGameId.split(GameModel.USER_GAME_ID_SEPARATOR)[0];
+  }
+
+  contains(currentUser: UserModel): boolean {
+    return !!this.userGameIds.find(name => name.includes(currentUser.id));
+  }
+
 
   isStarted(): boolean {
     return !(this.turn == null);
@@ -79,14 +90,20 @@ export class GameModel {
   }
 
   isCurrentPlayer(userId: string | undefined) {
-    return this.turn?.current === userId;
+    if (!userId) return false;
+    return this.turn?.current.includes(userId);
   }
 
   findActivePlayer(userId: string | undefined) {
-    return this.turn?.activePlayers.find((player) => player.name === userId);
+    if (!userId) return undefined;
+    return this.turn?.activePlayers.find((player) => player.name.includes(userId));
   }
 
   diceCount(): number | undefined {
     return this.turn?.activePlayers.reduce((acc, player) => acc + player.dices.length, 0);
+  }
+
+  canStart(): boolean {
+    return this.userGameIds.length >= 2;
   }
 }

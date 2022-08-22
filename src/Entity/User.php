@@ -6,6 +6,7 @@ use Symfony\Component\Uid\Uuid;
 
 class User
 {
+    private const USER_GAME_ID_KEY = '/$_perudo_$/';
     private Uuid $uuid;
     private string $name;
 
@@ -17,6 +18,11 @@ class User
     {
         $this->uuid = $uuid;
         $this->name = $name;
+    }
+
+    public function gameUserId()
+    {
+        return $this->uuid . self::USER_GAME_ID_KEY . $this->name();
     }
 
     public function uuid(): Uuid

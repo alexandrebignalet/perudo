@@ -1,32 +1,34 @@
 import React from 'react';
-import styled from 'styled-components';
 import { BetModel } from '../perudo/domain/game.model';
+import { BetStyle, DiceNumber, PerudoButtonText, Row, Typography } from '../Styles';
 
 type Props = {
   bet?: BetModel;
 };
 
 
-const Style = styled.div`
-    padding: 4em;
-    background: papayawhip;
-    display: flex;
-`;
-
-const DiceNumber = styled.div`
-    font-size: 1.5em;
-    text-align: center;
-`;
-
-const DiceValue = styled.div`
-    border-left: 2px solid palevioletred;
-    font-size: 1.5em;
-    text-align: center;
-`;
-
 export const Bet: React.FC<Props> = ({ bet }) => {
-  return (<Style>
-        <DiceNumber>{bet?.diceNumber || '-'}</DiceNumber>
-        <DiceValue>{bet?.diceValue || '-'}</DiceValue>
-    </Style>);
+  // @ts-ignore
+  const dotNumbers = [...Array(bet?.diceValue).keys()];
+  const diceValueClasses = ['first-face', 'second-face', 'third-face', 'forth-face', 'fifth-face', 'sixth-face'];
+  const diceValueClass = bet && diceValueClasses[bet.diceValue - 1];
+
+  return (<BetStyle>
+        <Row>
+
+            <DiceNumber>
+                <Typography size={'xl'} bold>
+                    <PerudoButtonText size={'xl'}>{bet?.diceNumber || '-'}</PerudoButtonText>
+                </Typography>
+            </DiceNumber>
+
+            <div className={`dice ${diceValueClass}`}>
+                {dotNumbers.map((y) => {
+                  return <div className={'dot'} key={y}/>;
+                })}
+            </div>
+
+        </Row>
+    </BetStyle>)
+  ;
 };

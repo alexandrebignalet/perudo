@@ -1,38 +1,179 @@
-.App {
-  text-align: center;
+html {
+    --vh: 3.14px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    font-family: 'Helvetica Neue', HelveticaNeue, Roboto, 'Liberation Sans', 'Nimbus Sans L', Helvetica,
+    'Arial', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-transform: lowercase;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#root {
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: 100vh;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+:root {
+    --color-primary: red;
+    --color-secondary: yellow;
+    --color-tertiary: green;
+    --color-quaternary: yellow;
+    --color-quinary: red;
 }
 
-.App-link {
-  color: #61dafb;
+@keyframes shadows {
+    0% {
+        text-shadow: none;
+    }
+    10% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary);
+    }
+    20% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary);
+    }
+    30% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary), 5.8px 5.8px var(--color-quaternary);
+    }
+    40% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary), 5.8px 5.8px var(--color-quaternary),
+        7.8px 7.8px 0 var(--color-quinary);
+    }
+    50% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary), 5.8px 5.8px var(--color-quaternary),
+        7.8px 7.8px 0 var(--color-quinary);
+    }
+    60% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary), 5.8px 5.8px var(--color-quaternary),
+        7.8px 7.8px 0 var(--color-quinary);
+    }
+    70% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary), 5.8px 5.8px var(--color-quaternary);
+    }
+    80% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary),
+        3.8px 3.8px 0 var(--color-tertiary);
+    }
+    90% {
+        text-shadow: 1.8px 1.8px 0 var(--color-secondary);
+    }
+    100% {
+        text-shadow: none;
+    }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes move {
+    0% {
+        transform: translate(0px, 0px);
+    }
+    40% {
+        transform: translate(-12px, -12px);
+    }
+    50% {
+        transform: translate(-12px, -12px);
+    }
+    60% {
+        transform: translate(-12px, -12px);
+    }
+    100% {
+        transform: translate(0px, 0px);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: rotate(-15deg);
+    }
+    16% {
+        transform: rotate(-15deg);
+    }
+    32% {
+        transform: rotate(-15deg);
+    }
+    48% {
+        transform: rotate(15deg);
+    }
+    64% {
+        transform: rotate(15deg);
+    }
+    80% {
+        transform: rotate(15deg);
+    }
+    96% {
+        transform: rotate(-15deg);
+    }
+}
+
+
+.first-face {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dice {
+    padding: 15px;
+    background-color: #a55273;
+    width: 52px;
+    height: 52px;
+    border-radius: 10%;
+    margin-right: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border: 2px solid #fccc69;
+}
+
+.dot {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #fde27c;
+}
+
+.second-face {
+    display: flex;
+    justify-content: space-between;
+}
+
+.second-face .dot:nth-of-type(2) {
+    align-self: flex-end;
+}
+
+.third-face {
+    display: flex;
+    justify-content: space-between;
+}
+
+.third-face .dot:nth-of-type(1) {
+    align-self: flex-end;
+}
+
+.third-face .dot:nth-of-type(2) {
+    align-self: center;
+}
+
+
+.fourth-face, .sixth-face, .fifth-face {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fourth-face .column, .sixth-face .column, .fifth-face .column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.fifth-face .column:nth-of-type(2) {
+    justify-content: center;
 }

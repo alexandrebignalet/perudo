@@ -40,8 +40,10 @@ class PerudoController
      */
     public function create(): Response
     {
-        $gameId = $this->em->wrapInTransaction(function () {
+        $user = $this->userService->getUserOrThrow();
+        $gameId = $this->em->wrapInTransaction(function () use ($user) {
             $perudo = new Perudo();
+            $perudo->join($user->gameUserId());
 
             $gameId = $this->repository->save($perudo);
             $this->firebaseRepository->project($gameId, $perudo);
@@ -62,7 +64,7 @@ class PerudoController
             $gameId = new GameId($id);
             $perudo = $this->repository->find($gameId);
 
-            $perudo->join($user->uuid());
+            $perudo->join($user->gameUserId());
 
             $this->repository->save($perudo, $gameId);
             $this->firebaseRepository->project($gameId, $perudo);
@@ -102,7 +104,7 @@ class PerudoController
             $gameId = new GameId($id);
             $perudo = $this->repository->find($gameId);
 
-            $perudo->bet($user->uuid(), $body['number'], $body['value']);
+            $perudo->bet($user->gameUserId(), $body['number'], $body['value']);
 
             $this->repository->save($perudo, $gameId);
             $this->firebaseRepository->project($gameId, $perudo);
@@ -123,7 +125,7 @@ class PerudoController
             $gameId = new GameId($id);
             $perudo = $this->repository->find($gameId);
 
-            $perudo->contestLastBet($user->uuid());
+            $perudo->contestLastBet($user->gameUserId());
 
             $this->repository->save($perudo, $gameId);
             $this->firebaseRepository->project($gameId, $perudo);

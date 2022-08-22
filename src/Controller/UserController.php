@@ -6,17 +6,14 @@ use App\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController
 {
     private UserService $userService;
-    private SerializerInterface $serializer;
 
-    public function __construct(UserService $userService, SerializerInterface $serializer)
+    public function __construct(UserService $userService)
     {
         $this->userService = $userService;
-        $this->serializer = $serializer;
     }
 
 
