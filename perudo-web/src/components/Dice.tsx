@@ -1,4 +1,5 @@
 import React from 'react';
+import { Typography } from '../Styles';
 
 type Props = {
   diceValue: number;
@@ -10,7 +11,7 @@ export const Dice: React.FC<Props> = ({ diceValue, small }) => {
   switch (diceValue) {
     case 1:
       return <div className={`first-face dice ${additionalClassName}-dice`}>
-                <span className={`dot ${additionalClassName}-dot`}/>
+                <Typography size={small ? 'l' : 'xl'}>🦜</Typography>
             </div>;
     case 2:
       return <div className={`second-face dice ${additionalClassName}-dice`}>
