@@ -189,3 +189,28 @@ body {
 .fifth-face .column:nth-of-type(2) {
     justify-content: center;
 }
+
+.Toastify__toast-container {
+    width: 100% !important;
+}
+
+.Toastify__toast-body {
+    min-height: 50px !important;
+    text-align: center;
+}
+
+.Toastify__toast {
+    border-radius: 10px !important;
+    padding: 5px !important;
+    border: 1px solid #ffcd67;
+    background-color: #ffe17b !important;
+    color: #a25271 !important;
+    font-size: 24px !important;
+    font-family: inherit !important;
+    font-weight: bold !important;
+    line-break: auto !important;
+}
+
+.Toastify__toast-container--top-center {
+    top: 50% !important;
+}

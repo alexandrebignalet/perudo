@@ -106,4 +106,8 @@ export class GameModel {
   canStart(): boolean {
     return this.userGameIds.length >= 2;
   }
+
+  isOver() {
+    return !!this.winner;
+  }
 }

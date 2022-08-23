@@ -53,8 +53,8 @@ export const Home: React.FC<Props> = ({
   const availableGames = useMemo(() => {
     if (!currentUser) return [];
     return games.filter((game) =>
-      (game.isStarted() && game.contains(currentUser))
-            || (!game.isStarted()),
+      !game.isOver() && ((game.isStarted() && game.contains(currentUser))
+                || !game.isStarted()),
     );
   }, [currentUser, games]);
 

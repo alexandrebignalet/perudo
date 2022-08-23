@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { GameModel } from '../perudo/domain/game.model';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Bet } from './Bet';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
 import { FirebaseRepository } from '../perudo/infra/firebase.repository';
@@ -19,45 +19,45 @@ interface Props {
 }
 
 export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository, userService }) => {
+  const navigate = useNavigate();
   const { id: gameId } = useParams<{ id: string }>();
   const [game, setGame] = useState<GameModel | undefined>(undefined);
   const [showDice, setShowDice] = useState<boolean>(false);
   const currentUser = userService.getCurrentUser();
 
-  const toastIds = React.useRef<string[]>([]);
 
-  const alertOnStateChange = (newGameState: GameModel | undefined, prevGameState: GameModel | undefined) => {
+  const alertOnStateChange = useCallback((newGameState: GameModel | undefined, prevGameState: GameModel | undefined) => {
     if (newGameState?.diceCount() === prevGameState?.diceCount()) return;
+
     prevGameState?.turn?.activePlayers.forEach((oldActivePlayerState) => {
       const newActivePlayerState = newGameState?.findActivePlayer(oldActivePlayerState.name);
       const oldPlayerName = `${UserModel.emoji(oldActivePlayerState.name)} ${GameModel.nameOf(oldActivePlayerState.name)}`;
       if (newActivePlayerState == null) {
-        toast(`${oldPlayerName} sort du jeu 👎`);
+        toast(`${oldPlayerName} sort du jeu 👎`, { position: 'top-center' });
         return;
       }
 
       if (newActivePlayerState.dices.length < oldActivePlayerState.dices.length) {
-        const toastId = `loose-dice-${oldActivePlayerState.name}`;
+        const toastId = `loose-dice-${oldActivePlayerState.name}-${new Date().getSeconds()}`;
         const message = `${oldPlayerName} perd un dé 👎`;
-        if (!toastIds.current.includes(toastId)) {
-          toastIds.current.push(toastId);
-          toast(message, { toastId });
-        }
+        toast(message, { toastId, position: 'top-center' });
       }
     });
 
     if (newGameState?.winner) {
       const winnerName = `${UserModel.emoji(newGameState.winner)} ${GameModel.nameOf(newGameState.winner)}`;
-      toast(`${winnerName} gagne 🥳 🎉 👯‍️`);
+      toast(`${winnerName} gagne 🥳 🎉 👯‍️`, { position: 'top-center' });
+      setTimeout(() => navigate('/'), 5000);
+      return;
     }
-  };
+  }, [navigate]);
 
   const onGameUpdated = useCallback((newGameState: GameModel | undefined) => {
     return setGame((prevGameState: GameModel | undefined) => {
       alertOnStateChange(newGameState, prevGameState);
       return newGameState;
     });
-  }, []);
+  }, [alertOnStateChange]);
 
   useEffect(() => {
     if (!gameId) return;

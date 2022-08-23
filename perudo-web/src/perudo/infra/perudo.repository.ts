@@ -79,7 +79,7 @@ export class PerudoRepository {
       throw new Error('Fail to bet on game - ' + JSON.stringify({ diceNumber, diceValue, gameId }));
     }
   }
-
+  
   async contestLastBet(gameId: string) {
     this.setLoading(true);
     const response = await fetch(`${this.backEndUrl}/games/${gameId}/contest`, {
@@ -100,6 +100,6 @@ export class PerudoRepository {
   private static async handleException(response: Response): Promise<void> {
     const body: { exception: { message: string } } = await response.json();
     const errorMessage = `${body.exception.message}`;
-    toast(errorMessage, { type: 'error', icon: '🦄' });
+    toast(errorMessage, { type: 'error', icon: '🦄', position: 'bottom-center' });
   }
 }

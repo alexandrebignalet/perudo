@@ -72,7 +72,7 @@ type PerudoTitleProps = {
 export const PerudoTitle = styled.span<PerudoTitleProps>`
     border-radius: 10px;
     padding: 8px;
-    margin-left: 10px;
+    margin: 0 10px;
     color: white;
     background: ${({ backgroundColor }) => backgroundColor};
     text-shadow: .1em .1em 0 hsl(200 50% 30%);
