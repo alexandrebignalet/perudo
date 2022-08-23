@@ -19,7 +19,6 @@ export const BackgroundImage = styled.img`
 export const Stripe = styled.div`
     border-radius: 10px;
     min-height: 100%;
-    min-width: 400px;
     margin: auto;
     background-color: #fbbc967d;
     box-sizing: border-box;
@@ -81,17 +80,19 @@ export const PerudoTitle = styled.span<PerudoTitleProps>`
 `;
 
 export const InputContainer = styled.div`
-    margin-top: 50px;
-    margin-bottom: 50px;
     border-radius: 10px;
-    padding: 5px;
     background-color: #edc7c7;
     color: #ed0166;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
+    height: 45px;
+    padding: 5px;
+    width: 100%;
 `;
 
 export const PerudoInput = styled.input`
+    width: 100%;
+    text-align:center;
     background-color: inherit;
     color: inherit;
     padding: 5px;
@@ -112,6 +113,8 @@ export const PerudoSelectInput = styled.select`
     background-color: inherit;
     color: inherit;
     padding: 5px;
+    text-align:center;
+    width: 100%;
     font-size: 20px;
     border: none;
     appearance: none;
@@ -132,7 +135,10 @@ export const Container = styled.div`
     flex: 1;
 `;
 
-export const PerudoButton = styled.button`
+type PerudoButtonProps = {
+  fullWidth?: boolean;
+};
+export const PerudoButton = styled.button<PerudoButtonProps>`
     height: 50px;
     padding: 5px 10px 5px 10px;
     border: 1px solid #f575f5;
@@ -140,7 +146,7 @@ export const PerudoButton = styled.button`
     cursor: pointer;
     box-shadow: 3px 4px 2px 1px #f44789;
     background-color: #cf01c4;
-
+    ${({ fullWidth }) => fullWidth ? 'width: 100%;' : ''}
     &:hover {
         background-color: #ed0166;
     }
@@ -162,6 +168,7 @@ export const PerudoButtonText = styled.span<PerudoButtonTextProps>`
     font-weight: bold;
     color: white;
     font-size: ${({ size }) => tshirtToPx(size)};
+    user-select: none;
     animation: ${({ disabled }) => disabled ? 'none' : 'shadows 1.2s ease-in infinite, move 1.2s ease-in infinite'};
 `;
 
@@ -191,13 +198,20 @@ export const Column = styled.div`
     align-items:center;
     justify-content-center;
     width: 100%;
+    gap: 10px;
 `;
 
-export const Row = styled.div`
+type RowProps = {
+  margin?: string;
+  minHeight?: string;
+};
+export const Row = styled.div<RowProps>`
     display: flex;
     width: 100%;
     justify-content: space-around;
     align-items: center;
+    ${({ margin }) => `margin: ${margin};` ?? ''}
+    ${({ minHeight }) => `min-height: ${minHeight};` ?? ''}
 `;
 
 export const BetStyle = styled.div`

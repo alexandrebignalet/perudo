@@ -4,7 +4,7 @@ import { PerudoRepository } from '../perudo/infra/perudo.repository';
 import { FirebaseRepository } from '../perudo/infra/firebase.repository';
 import { useNavigate } from 'react-router-dom';
 import { UserService } from '../perudo/infra/user.service';
-import { Box, HomeLoggedIn, InputContainer, PerudoButton, PerudoButtonText, PerudoInput } from '../Styles';
+import { Box, Column, HomeLoggedIn, InputContainer, PerudoButton, PerudoButtonText, PerudoInput } from '../Styles';
 import { PlayerList } from './PlayerList';
 
 type Props = {
@@ -94,13 +94,15 @@ export const Home: React.FC<Props> = ({
             !currentUser && (
                 <>
                     <InputContainer>
-                        <PerudoInput type="text" autoFocus placeholder="cliques ici et donne ton nom" value={userName}
+                        <PerudoInput type="text" autoFocus placeholder="ton nom" value={userName}
                                      onChange={(event) => setUserName(event.target.value)}/>
                     </InputContainer>
 
-                    <PerudoButton type="button" onClick={createUser} disabled={!userName}>
-                        <PerudoButtonText size={'l'} disabled={!userName}>fini</PerudoButtonText>
-                    </PerudoButton>
+                    <Column>
+                        <PerudoButton type="button" fullWidth onClick={createUser} disabled={!userName}>
+                            <PerudoButtonText size={'l'} disabled={!userName}>fini</PerudoButtonText>
+                        </PerudoButton>
+                    </Column>
                 </>
             )
         }

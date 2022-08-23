@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import { UserService } from './perudo/infra/user.service';
 import { AppStyle, BackgroundImage, Container, Header, PerudoTitle, Stripe, Typography } from './Styles';
 import { ToastContainer } from 'react-toastify';
+import { UserModel } from './perudo/domain/user.model';
 
 function App() {
 
@@ -39,6 +40,8 @@ function App() {
     'linear-gradient(180deg, #181818 12.5%,#784F17 12.5%, 25%, #FE0000 25%, 37.5%,#FD8C00 37.5%, 50%, #FFE500 50%, 62.5%,#119F0B 62.5%, 75%, #0644B3 75%, 87.5%,#C22EDC 87.5%)',
   ];
 
+  const currentUser = userService.getCurrentUser();
+
   return (
         <AppStyle>
 
@@ -62,8 +65,9 @@ function App() {
                         <PerudoTitle
                             loading={loading ? '1' : undefined}
                             backgroundColor={backgroundColors[Math.round(Math.random() * (backgroundColors.length - 1))]}>
-                            perudo {userService.getCurrentUser()?.name}
+                            perudo
                         </PerudoTitle>
+                        {currentUser && UserModel.emoji(currentUser?.id)}
                     </Typography>
                 </Header>
                 <Container>

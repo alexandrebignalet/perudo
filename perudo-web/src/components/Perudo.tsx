@@ -4,12 +4,13 @@ import { useParams } from 'react-router-dom';
 import { Bet } from './Bet';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
 import { FirebaseRepository } from '../perudo/infra/firebase.repository';
-import { NewBet } from './NewBet';
+import { UserActions } from './UserActions';
 import { toast } from 'react-toastify';
 import { UserService } from '../perudo/infra/user.service';
-import { Box, Column, GamePlayerList, PerudoButton, PerudoButtonText, Typography } from '../Styles';
+import { Box, Column, GamePlayerList, PerudoButton, PerudoButtonText, Row, Typography } from '../Styles';
 import { PlayerList } from './PlayerList';
 import { UserModel } from '../perudo/domain/user.model';
+import { Dice } from './Dice';
 
 interface Props {
   perudoRepository: PerudoRepository
@@ -29,14 +30,15 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
     if (newGameState?.diceCount() === prevGameState?.diceCount()) return;
     prevGameState?.turn?.activePlayers.forEach((oldActivePlayerState) => {
       const newActivePlayerState = newGameState?.findActivePlayer(oldActivePlayerState.name);
+      const oldPlayerName = `${UserModel.emoji(oldActivePlayerState.name)} ${GameModel.nameOf(oldActivePlayerState.name)}`;
       if (newActivePlayerState == null) {
-        toast(`${oldActivePlayerState.name} perd :thumbsdown:`);
+        toast(`${oldPlayerName} sort du jeu 👎`);
         return;
       }
 
       if (newActivePlayerState.dices.length < oldActivePlayerState.dices.length) {
         const toastId = `loose-dice-${oldActivePlayerState.name}`;
-        const message = `${oldActivePlayerState.name} perd un dé :thumbsdown:`;
+        const message = `${oldPlayerName} perd un dé 👎`;
         if (!toastIds.current.includes(toastId)) {
           toastIds.current.push(toastId);
           toast(message, { toastId });
@@ -45,7 +47,8 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
     });
 
     if (newGameState?.winner) {
-      toast(`${newGameState.winner} gagne :hooray:`);
+      const winnerName = `${UserModel.emoji(newGameState.winner)} ${GameModel.nameOf(newGameState.winner)}`;
+      toast(`${winnerName} gagne 🥳 🎉 👯‍️`);
     }
   };
 
@@ -66,11 +69,6 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
     await perudoRepository.start(game.id);
   }, [game, perudoRepository]);
 
-  const contest = useCallback(async () => {
-    if (!game) return;
-    await perudoRepository.contestLastBet(game.id);
-  }, [game, perudoRepository]);
-
   return (<div>
             {game?.isStarted() && (<>
                     <Box>
@@ -87,28 +85,38 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
                         </GamePlayerList>
                     </Box>
 
-                    <Bet bet={game?.lastBet}/>
+                    {game?.lastBet && <Bet bet={game?.lastBet}/>}
 
-                    {game?.isCurrentPlayer(currentUser?.id) && (<>
-                        <NewBet game={game} perudoRepository={perudoRepository}/>
-
-                        <Column>
-                            {!((game?.lastBet) == null) && <PerudoButton type="button" onClick={contest}>
-                                <PerudoButtonText size={'l'}>singerie!</PerudoButtonText>
-                            </PerudoButton>}
-                        </Column>
-                    </>)}
+                    {game?.isCurrentPlayer(currentUser?.id) &&
+                        <UserActions game={game} perudoRepository={perudoRepository}/>}
 
                     <Column>
-                        <PerudoButton type="button" onMouseDown={() => setShowDice(true)}
-                                      onMouseUp={() => setShowDice(false)}>
-                            <PerudoButtonText size={'l'}>{'voir'}</PerudoButtonText>
+                        <PerudoButton type="button" fullWidth
+                                      onContextMenu={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        return false;
+                                      }}
+                                      onPointerDown={() => {
+                                        setShowDice(true);
+                                      }}
+                                      onPointerUp={() => {
+                                        setShowDice(false);
+                                      }}
+                                      onMouseDown={() => {
+                                        setShowDice(true);
+                                      }}
+                                      onMouseUp={() => {
+                                        setShowDice(false);
+                                      }}>
+                            <PerudoButtonText size={'l'}>{'👀'}</PerudoButtonText>
                         </PerudoButton>
                     </Column>
-                    {showDice && <ul>
-                        {game?.findActivePlayer(currentUser?.id)?.dices.map((dice, index) => <li
-                            key={`${index}-${dice}`}>{dice === 1 ? 'PACO' : dice}</li>)}
-                    </ul>}
+                    <Row margin={'10px 0'} minHeight={'80px'}>
+                        {showDice && game?.findActivePlayer(currentUser?.id)?.dices.map((dice, index) =>
+                            <Dice small diceValue={dice} key={`${index}-${dice}`}/>,
+                        )}
+                    </Row>
                 </>
             )}
 
@@ -122,7 +130,6 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
                     <PerudoButtonText size={'l'} disabled={!game?.canStart()}>{'let\'s gooo'}</PerudoButtonText>
                 </PerudoButton>
             </Box>)}
-
         </div>
   );
 };
