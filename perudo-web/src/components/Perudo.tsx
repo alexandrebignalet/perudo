@@ -7,7 +7,7 @@ import { FirebaseRepository } from '../perudo/infra/firebase.repository';
 import { UserActions } from './UserActions';
 import { toast } from 'react-toastify';
 import { UserService } from '../perudo/infra/user.service';
-import { Box, Column, GamePlayerList, PerudoButton, PerudoButtonText, Row, Typography } from '../Styles';
+import { Box, Column, GamePlayerList, Palefico, PerudoButton, PerudoButtonText, Row, Typography } from '../Styles';
 import { PlayerList } from './PlayerList';
 import { UserModel } from '../perudo/domain/user.model';
 import { Dice } from './Dice';
@@ -84,6 +84,9 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
                                 </li>)}
                         </GamePlayerList>
                     </Box>
+
+                    {game?.turn?.isPalefico &&
+                        <Palefico><Typography size={'l'} bold>☠️ ️palefico 🏴‍☠️‍</Typography></Palefico>}
 
                     {game?.lastBet && <Bet bet={game?.lastBet}/>}
 

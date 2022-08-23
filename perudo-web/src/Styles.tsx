@@ -228,8 +228,17 @@ export const DiceNumber = styled.div`
     background-color: #fde27c;
     border-radius: 10px;
     padding: 1.8em;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
     color: #ff636a;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     border: 2px solid #ff616c;
+`;
+
+export const Palefico = styled.div`
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #421437;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    color: #fe646b;
 `;
