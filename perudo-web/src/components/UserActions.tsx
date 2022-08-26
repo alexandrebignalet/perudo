@@ -1,6 +1,6 @@
 import { GameModel } from '../perudo/domain/game.model';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Column, InputContainer, PerudoButton, PerudoButtonText, PerudoInput, PerudoSelectInput, Row } from '../Styles';
 import { UserModel } from '../perudo/domain/user.model';
 
@@ -35,13 +35,18 @@ export const UserActions: React.FC<Props> = ({ game, perudoRepository, currentUs
     await perudoRepository.contestLastBet(game.id);
   }, [game, perudoRepository]);
 
+  const isPaleficoRestricted = useMemo(() => {
+    let currentPlayer = game?.findActivePlayer(currentUser.id);
+    return game.turn?.isPalefico ? !(currentPlayer?.isPalefico && !game?.lastBet) : false;
+  }, [currentUser.id, game]);
+
   return <Column>
         <InputContainer>
             <PerudoInput autoFocus type="number" value={bet.number} min={0}
                          placeholder="nombre"
                          onChange={event => setBet({ number: +event.target.value, value: bet.value })}/>
             <PerudoSelectInput value={bet.value}
-                               disabled={!(game?.findActivePlayer(currentUser.id)?.isPalefico && !game?.lastBet)}
+                               disabled={isPaleficoRestricted}
                                onChange={event => setBet({ number: bet.number, value: +event.target.value })}>
                 {game?.allowPacoBet() && <option value={1}>PACO</option>}
                 <option value={2}>2</option>

@@ -54,6 +54,14 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
   const alertOnStateChange = useCallback((newGameState: GameModel | undefined, prevGameState: GameModel | undefined) => {
     if (newGameState?.diceCount() === prevGameState?.diceCount()) return;
 
+    if (newGameState?.winner) {
+      const winnerName = `${UserModel.emoji(newGameState.winner)} ${GameModel.nameOf(newGameState.winner)}`;
+      toast(<TurnEndSummary message={`${winnerName} gagne 🥳 🎉 👯‍️`}
+                                  game={prevGameState!}/>, { position: 'top-center' });
+      setTimeout(() => navigate('/'), 5000);
+      return;
+    }
+
     prevGameState?.turn?.activePlayers.forEach((oldActivePlayerState) => {
       const newActivePlayerState = newGameState?.findActivePlayer(oldActivePlayerState.name);
       const oldPlayerName = `${UserModel.emoji(oldActivePlayerState.name)} ${GameModel.nameOf(oldActivePlayerState.name)}`;
@@ -69,13 +77,6 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
         toast(summary, { toastId, position: 'top-center' });
       }
     });
-
-    if (newGameState?.winner) {
-      const winnerName = `${UserModel.emoji(newGameState.winner)} ${GameModel.nameOf(newGameState.winner)}`;
-      toast(`${winnerName} gagne 🥳 🎉 👯‍️`, { position: 'top-center' });
-      setTimeout(() => navigate('/'), 5000);
-      return;
-    }
   }, [currentUser, navigate]);
 
   const onGameUpdated = useCallback((newGameState: GameModel | undefined) => {
