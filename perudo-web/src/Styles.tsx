@@ -204,12 +204,15 @@ export const Column = styled.div`
 type RowProps = {
   margin?: string;
   minHeight?: string;
+  justifyContent?: string;
+  gap?: string;
 };
 export const Row = styled.div<RowProps>`
     display: flex;
     width: 100%;
-    justify-content: space-around;
+    justify-content: ${({ justifyContent }) => justifyContent ?? 'space-around'};
     align-items: center;
+    ${({ gap }) => `gap: ${gap};` ?? ''}
     ${({ margin }) => `margin: ${margin};` ?? ''}
     ${({ minHeight }) => `min-height: ${minHeight};` ?? ''}
 `;

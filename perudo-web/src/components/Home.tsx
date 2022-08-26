@@ -52,10 +52,7 @@ export const Home: React.FC<Props> = ({
 
   const availableGames = useMemo(() => {
     if (!currentUser) return [];
-    return games.filter((game) =>
-      !game.isOver() && ((game.isStarted() && game.contains(currentUser))
-                || !game.isStarted()),
-    );
+    return games.filter((game) => !game.isOver());
   }, [currentUser, games]);
 
 
@@ -83,7 +80,11 @@ export const Home: React.FC<Props> = ({
                                 <PlayerList game={game}/>
                             </div>
                             <PerudoButton onClick={() => join(game)}>
-                                <PerudoButtonText size={'m'}>rejoindre</PerudoButtonText>
+                                <PerudoButtonText size={'m'}>
+                                    {!game.isStarted() && 'rejoindre'}
+                                    {game.isStarted() && game.contains(currentUser) && 'rejoindre'}
+                                    {game.isStarted() && !game.contains(currentUser) && '👀 regarder'}
+                                </PerudoButtonText>
                             </PerudoButton>
                         </Box>)
                     }

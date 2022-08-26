@@ -3,15 +3,15 @@ import { Typography } from '../Styles';
 
 type Props = {
   diceValue: number;
-  small?: boolean;
+  size?: 's' | 'm';
 };
 
-export const Dice: React.FC<Props> = ({ diceValue, small }) => {
-  const additionalClassName = small ? 'small' : '';
+export const Dice: React.FC<Props> = ({ diceValue, size }) => {
+  const additionalClassName = size ? size : '';
   switch (diceValue) {
     case 1:
       return <div className={`first-face dice ${additionalClassName}-dice`}>
-                <Typography size={small ? 'l' : 'xl'}>🦜</Typography>
+                <Typography size={size ?? 'xl'}>🦜</Typography>
             </div>;
     case 2:
       return <div className={`second-face dice ${additionalClassName}-dice`}>

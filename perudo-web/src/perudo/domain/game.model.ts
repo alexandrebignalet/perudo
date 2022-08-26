@@ -86,7 +86,7 @@ export class GameModel {
   }
 
   allowPacoBet() {
-    return !(this.lastBet == null);
+    return this.turn?.isPalefico || !(this.lastBet == null);
   }
 
   isCurrentPlayer(userId: string | undefined) {

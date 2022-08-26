@@ -36,7 +36,6 @@ class PerudoDenormalizer implements ContextAwareDenormalizerInterface, Denormali
             $diceLauncherImpl,
             $data['playersNames'],
             is_null($turn) ? null : new PlayerTurn(
-                $turn['count'],
                 $turn['current'],
                 array_map(fn($value) => new Player(
                     $value['name'],

@@ -1,14 +1,16 @@
 import { GameModel } from '../perudo/domain/game.model';
 import { PerudoRepository } from '../perudo/infra/perudo.repository';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Column, InputContainer, PerudoButton, PerudoButtonText, PerudoInput, PerudoSelectInput, Row } from '../Styles';
+import { UserModel } from '../perudo/domain/user.model';
 
 type Props = {
   game: GameModel;
   perudoRepository: PerudoRepository;
+  currentUser: UserModel;
 };
 
-export const UserActions: React.FC<Props> = ({ game, perudoRepository }) => {
+export const UserActions: React.FC<Props> = ({ game, perudoRepository, currentUser }) => {
   const [bet, setBet] = useState<{ value: number, number: number }>(game?.lastBet ? {
     value: game.lastBet.diceValue,
     number: game.lastBet.diceNumber,
@@ -16,6 +18,12 @@ export const UserActions: React.FC<Props> = ({ game, perudoRepository }) => {
     value: game?.allowPacoBet() ? 1 : 2,
     number: 1,
   });
+
+  useEffect(() => {
+    if (!game.allowPacoBet() && bet.value === 1) {
+      setBet({ number: bet.number, value: 2 });
+    }
+  }, [bet.number, bet.value, game]);
 
   const doBet = useCallback(() => {
     if (!game || !bet.value || !bet.number) return;
@@ -33,6 +41,7 @@ export const UserActions: React.FC<Props> = ({ game, perudoRepository }) => {
                          placeholder="nombre"
                          onChange={event => setBet({ number: +event.target.value, value: bet.value })}/>
             <PerudoSelectInput value={bet.value}
+                               disabled={!(game?.findActivePlayer(currentUser.id)?.isPalefico && !game?.lastBet)}
                                onChange={event => setBet({ number: bet.number, value: +event.target.value })}>
                 {game?.allowPacoBet() && <option value={1}>PACO</option>}
                 <option value={2}>2</option>

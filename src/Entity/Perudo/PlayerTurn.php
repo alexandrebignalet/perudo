@@ -6,7 +6,6 @@ use App\Service\DiceLauncher;
 
 class PlayerTurn
 {
-    private int $count;
     private int $current;
     private array $activePlayers;
     private DiceLauncher $diceLauncher;
@@ -14,12 +13,11 @@ class PlayerTurn
     public static function init(array $playersNames, DiceLauncher $launcher): PlayerTurn
     {
         $players = array_map(fn(string $name) => Player::init($name, Player::$START_DICES_COUNT, false, $launcher), $playersNames);
-        return new PlayerTurn(count($players), 0, $players, $launcher);
+        return new PlayerTurn(0, $players, $launcher);
     }
 
-    public function __construct(int $count, int $current, array $activePlayers, DiceLauncher $diceLauncher)
+    public function __construct(int $current, array $activePlayers, DiceLauncher $diceLauncher)
     {
-        $this->count = $count;
         $this->current = $current;
         $this->activePlayers = $activePlayers;
         $this->diceLauncher = $diceLauncher;
@@ -55,14 +53,10 @@ class PlayerTurn
         $isContestSucceeded = $lastBet->diceNumber() > $this->countAllDicesWithLastBetValue($lastBet->diceValue());
 
         $looserName = $isContestSucceeded ? $this->prev()->name() : $this->current()->name();
-        $this->activePlayers = array_map(fn(Player $player): Player => $looserName == $player->name()
+        $playersWithUpToDateDices = array_map(fn(Player $player): Player => $looserName == $player->name()
             ? $player->looseDice($this->diceLauncher)
             : $player->rerollDices($this->diceLauncher), $this->activePlayers);
-
-        if ($this->prev()->diceCount() === 0) {
-            $this->removePrev();
-        }
-
+        $this->activePlayers = array_values(array_filter($playersWithUpToDateDices, fn(Player $player) => $player->diceCount() > 0));
 
         if ($isContestSucceeded) {
             $this->goPrev();
@@ -79,19 +73,12 @@ class PlayerTurn
 
     private function prevIndex(): int
     {
-        return $this->current === 0 ? $this->count - 1 : $this->current - 1;
+        return $this->current === 0 ? $this->count() - 1 : $this->current - 1;
     }
 
     public function isPalefico(): bool
     {
         return array_reduce($this->activePlayers, fn($acc, Player $p) => $acc || $p->isPalefico(), false);
-    }
-
-    private function removePrev()
-    {
-        $removed = $this->prevIndex();
-        array_splice($this->activePlayers, $removed, 1);
-        $this->count = count($this->activePlayers);
     }
 
     public function activePlayers(): array
@@ -101,7 +88,7 @@ class PlayerTurn
 
     public function winner()
     {
-        if ($this->count > 1) return null;
+        if ($this->count() > 1) return null;
         return $this->current()->name();
     }
 
@@ -110,6 +97,11 @@ class PlayerTurn
      */
     public function nextIndex(): int
     {
-        return $this->current === $this->count - 1 ? 0 : $this->current + 1;
+        return $this->current === $this->count() - 1 ? 0 : $this->current + 1;
+    }
+
+    public function count(): int
+    {
+        return count($this->activePlayers);
     }
 }

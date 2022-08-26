@@ -1,5 +1,5 @@
-19:07:29.628 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-19:07:29.791 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:15000
-19:07:30.443 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - ab-perudo-game-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 134ms, init: 0ms
-19:07:30.509 [NamespaceSystem-blocking-namespace-operation-dispatcher-6:ab-perudo-game-default-rtdb$-1315454391:] INFO com.firebase.core.namespace.StateManager - Namespace ab-perudo-game-default-rtdb status Active to Active
-19:10:58.514 [NamespaceSystem-akka.actor.default-dispatcher-12] INFO com.firebase.core.namespace.NamespaceActor - ab-perudo-game successfully activated FBKV (SurveyIdle(0)) wait: 1ms, init: 0ms
+09:29:18.819 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+09:29:19.024 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:15000
+09:29:19.870 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - ab-perudo-game-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 177ms, init: 0ms
+09:29:19.931 [NamespaceSystem-blocking-namespace-operation-dispatcher-6:ab-perudo-game-default-rtdb$532434822:] INFO com.firebase.core.namespace.StateManager - Namespace ab-perudo-game-default-rtdb status Active to Active
+09:29:43.185 [NamespaceSystem-akka.actor.default-dispatcher-15] INFO com.firebase.core.namespace.NamespaceActor - ab-perudo-game successfully activated FBKV (SurveyIdle(0)) wait: 5ms, init: 0ms

@@ -11,12 +11,37 @@ import { Box, Column, GamePlayerList, Palefico, PerudoButton, PerudoButtonText, 
 import { PlayerList } from './PlayerList';
 import { UserModel } from '../perudo/domain/user.model';
 import { Dice } from './Dice';
+import { TurnEndSummary } from './TurnEndSummary';
 
 interface Props {
   perudoRepository: PerudoRepository
   projectionRepository: FirebaseRepository
   userService: UserService
 }
+
+export const ActivePlayerList: React.FC<{ game?: GameModel, currentUser?: UserModel, showDices?: boolean }> = ({
+  game,
+  currentUser,
+  showDices,
+}) =>
+    <GamePlayerList>
+        {game?.turn?.activePlayers.map((player) =>
+            <li key={player.name}>
+                {game?.isCurrentPlayer(player.name) && <Typography size={'m'}
+                                                                   shake={game?.isCurrentPlayer(currentUser?.id)}>✋</Typography>}
+
+                {' '}
+                {UserModel.emoji(GameModel.idOf(player.name))}
+                {' '}
+                {GameModel.nameOf(player.name)}
+                {' '}
+                {showDices && <Row justifyContent={'unset'} gap={'2px'} margin={'5px 0'}>
+                    {player?.dices.map((value, index) => <Dice size="s" diceValue={value}
+                                                               key={`${index}-${value}`}/>)}
+                </Row>}
+            </li>,
+        )}
+    </GamePlayerList>;
 
 export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository, userService }) => {
   const navigate = useNavigate();
@@ -39,8 +64,9 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
 
       if (newActivePlayerState.dices.length < oldActivePlayerState.dices.length) {
         const toastId = `loose-dice-${oldActivePlayerState.name}-${new Date().getSeconds()}`;
-        const message = `${oldPlayerName} perd un dé 👎`;
-        toast(message, { toastId, position: 'top-center' });
+        const summary = <TurnEndSummary currentUser={currentUser} message={`${oldPlayerName} perd un dé 👎`}
+                                                game={prevGameState}/>;
+        toast(summary, { toastId, position: 'top-center' });
       }
     });
 
@@ -50,7 +76,7 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
       setTimeout(() => navigate('/'), 5000);
       return;
     }
-  }, [navigate]);
+  }, [currentUser, navigate]);
 
   const onGameUpdated = useCallback((newGameState: GameModel | undefined) => {
     return setGame((prevGameState: GameModel | undefined) => {
@@ -72,17 +98,7 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
   return (<div>
             {game?.isStarted() && (<>
                     <Box>
-                        <GamePlayerList>
-                            {game.turn?.activePlayers.map((player) =>
-                                <li key={player.name}>
-                                    {UserModel.emoji(GameModel.idOf(player.name))}
-                                    {' '}
-                                    {GameModel.nameOf(player.name)}
-                                    {' '}
-                                    {game?.isCurrentPlayer(player.name) && <Typography size={'m'}
-                                                                                       shake={game?.isCurrentPlayer(currentUser?.id)}>✋</Typography>}
-                                </li>)}
-                        </GamePlayerList>
+                        <ActivePlayerList game={game} currentUser={currentUser}/>
                     </Box>
 
                     {game?.turn?.isPalefico &&
@@ -91,7 +107,7 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
                     {game?.lastBet && <Bet bet={game?.lastBet}/>}
 
                     {game?.isCurrentPlayer(currentUser?.id) &&
-                        <UserActions game={game} perudoRepository={perudoRepository}/>}
+                        <UserActions game={game} perudoRepository={perudoRepository} currentUser={currentUser!}/>}
 
                     <Column>
                         <PerudoButton type="button" fullWidth
@@ -117,7 +133,7 @@ export const Perudo: React.FC<Props> = ({ perudoRepository, projectionRepository
                     </Column>
                     <Row margin={'10px 0'} minHeight={'80px'}>
                         {showDice && game?.findActivePlayer(currentUser?.id)?.dices.map((dice, index) =>
-                            <Dice small diceValue={dice} key={`${index}-${dice}`}/>,
+                            <Dice size="m" diceValue={dice} key={`${index}-${dice}`}/>,
                         )}
                     </Row>
                 </>
